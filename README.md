@@ -55,9 +55,9 @@ config:
 - Paste any valid JSON in the JSON Input panel.
 - Click “Convert & Scroll”.
 - The app uses a recursive jsonToToonGeneric() function to:
--- Handle nested objects
--- Handle arrays (with **-** bullets and **item1**, **item2**, …)
--- Indent child properties for readability
+- Handle nested objects
+- Handle arrays (with **-** bullets and **item1**, **item2**, …)
+- Indent child properties for readability
 The generated TOON is shown in:
 -- The TOON Input panel
 -- The Final Output box (with a “Copy Output” button)
