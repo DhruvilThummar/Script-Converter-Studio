@@ -147,20 +147,6 @@ index.html
 - Right-click → “Open with” → your browser
 That’s it. No server or build step required.
 
-## 🌍 Deploy (GitHub Pages)
-
-1.Push your code to a GitHub repository.
-2.In your repo, go to Settings → Pages.
-3.Under Source, choose:
--- Branch: main (or master)
--- Folder: / (root)
-4.Save.
-GitHub will give you a URL like:
-```
-https://<your-username>.github.io/json-toon-studio/
-```
-Share that link to let others use the JSON ⇄ TOON Studio online.
-
 ## 🔮 Future Ideas
 
 - More robust TOON ➝ JSON parser for generic TOON syntax
