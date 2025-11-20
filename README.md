@@ -95,19 +95,19 @@ The TOON ➝ JSON converter works with the cinematic-style format:
 
 - Two modes: JSON ➝ TOON and TOON ➝ JSON
 -Side navigation:
--- Converter
--- Output
--- TOON Data Type (docs section)
--Dark / Light theme toggle with emoji:
--- 🌙 Night Mode
--- 🌞 Day Mode
+- Converter
+- Output
+- TOON Data Type (docs section)
+- Dark / Light theme toggle with emoji:
+- 🌙 Night Mode
+- 🌞 Day Mode
 - Mobile-friendly:
--- Fixed top bar
--- Drawer-style sidebar for small screens
+- Fixed top bar
+- Drawer-style sidebar for small screens
 -Output tools:
 -- “📋 Copy Output” button
--- Clear buttons for both inputs
--- “✨ Fill Sample TOON” button to quickly load an example TOON
+- Clear buttons for both inputs
+- “✨ Fill Sample TOON” button to quickly load an example TOON
 
 ## 💾 Persistence
 
