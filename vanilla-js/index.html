@@ -54,33 +54,30 @@
     </header>
 
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-container">
-          <div class="logo-img">
-            <img src="assist/logo.svg" alt="JSON ⇄ TOON" />
-          </div>
-          <span>JSON ⇄ TOON</span>
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-img">
+                    <img src="assist/logo.svg" alt="JSON ⇄ TOON" />
+                </div>
+                <span>JSON ⇄ TOON</span>
+            </div>
         </div>
-      </div>
-
-      <nav>
-        <div class="nav-item active" data-target="#converter">
-          <span>🧰</span> Converter
+        <nav>
+            <ul>
+                <li><a href="index.html" class="nav-item active">🔄 Converter</a></li>
+                <li><a href="about.html" class="nav-item">🧬 About TOON</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="theme-switcher">
+                <label for="themeToggle" class="theme-toggle-label" id="themeLabel">Night Mode</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="themeToggle" class="theme-toggle" />
+                    <label for="themeToggle"></label>
+                </div>
+                <span class="theme-icon" id="themeIcon">🌙</span>
+            </div>
         </div>
-        <div class="nav-item" data-target="#output-section">
-          <span>📤</span> Output
-        </div>
-        <div class="nav-item" data-target="#about">
-          <span>🧬</span> TOON Data Type
-        </div>
-
-        <div class="nav-spacer"></div>
-
-        <button class="nav-item" id="themeToggle">
-          <span id="themeIcon">🌙</span>
-          <span id="themeLabel">Night Mode</span>
-        </button>
-      </nav>
     </aside>
 
     <main class="main-content">
@@ -152,43 +149,6 @@
           <pre id="outputBox">Waiting for input...</pre>
         </div>
         <button class="btn btn-ghost" id="btnCopy">📋 Copy Output</button>
-      </section>
-
-      <section id="about">
-        <h2>🧬 What is TOON?</h2>
-        <p class="section-description">
-          <strong>Token-Oriented Object Notation</strong>
-        </p>
-
-        <div class="grid">
-          <div class="card">
-            <h3>Tabular Arrays</h3>
-            <p class="card-description">
-              TOON handles lists of objects like CSVs to save space.
-            </p>
-            <pre class="code-block">
-users[2]:
-id,   name,   role
-101,  Alice,  Admin
-102,  Bob,    User</pre
-            >
-          </div>
-
-          <div class="card">
-            <h3>Clean Syntax</h3>
-            <p class="card-description">
-              Indentation replaces nesting braces.
-            </p>
-            <pre class="code-block">
-config:
-  debug: true
-  version: 1.0
-  tags:
-    - stable
-    - production</pre
-            >
-          </div>
-        </div>
       </section>
 
       <footer>
