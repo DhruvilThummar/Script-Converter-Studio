@@ -1,0 +1,16 @@
+.about-page-content {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.about-page-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.about-page-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
