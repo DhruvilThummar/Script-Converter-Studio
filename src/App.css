@@ -10,7 +10,7 @@
 }
 
 .light {
-  background: #f8fafc;
+  background: #fff0f5;
   color: #020617;
 }
 
@@ -18,18 +18,49 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 2rem;
   border-bottom: 1px solid #1f2937;
+  background-color: #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .light .navbar {
   border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
 }
 
 .navbar-left a {
-  margin-right: 1rem;
+  margin-right: 1.5rem;
   text-decoration: none;
   color: inherit;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-left a:hover {
+  color: #3b82f6;
+}
+
+.nav-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.light .nav-button {
+  border-color: #cbd5e1;
+}
+
+.nav-button:hover {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+.light .nav-button:hover {
+  background-color: #e2e8f0;
+  color: #020617;
 }
 
 .navbar-right .theme-toggle {
@@ -79,7 +110,6 @@
   gap: 0.75rem;
   padding: 0.75rem;
   flex: 1;
-  height: calc(100vh - 120px);
 }
 
 .panel {
@@ -150,7 +180,7 @@ button, .file-input-label {
   color: #e5e7eb;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s, color 0.2s, transform 0.1s ease-in-out;
 }
 
 .light button, .light .file-input-label {
@@ -162,10 +192,16 @@ button, .file-input-label {
 button:hover, .file-input-label:hover {
   background: #1f2937;
   color: white;
+  transform: translateY(-2px);
 }
 
 .light button:hover, .light .file-input-label:hover {
     background: #cbd5e1;
+    transform: translateY(-2px);
+}
+
+button:active, .file-input-label:active {
+  transform: translateY(0);
 }
 
 .panel-actions button, .panel-actions .file-input-label {
@@ -181,7 +217,6 @@ button:hover, .file-input-label:hover {
   min-height: 2.5rem;
 }
 
-/* Responsive: stack on small screens */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
@@ -192,7 +227,6 @@ button:hover, .file-input-label:hover {
   }
 }
 
-/* Utility hidden class */
 .hidden {
   display: none;
 }

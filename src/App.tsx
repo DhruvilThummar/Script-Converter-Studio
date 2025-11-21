@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import AboutPage from './AboutPage';
@@ -6,6 +6,7 @@ import DownloadButton from './DownloadButton';
 import Editor from '@monaco-editor/react';
 import FileInput from './FileInput';
 import { jsonToToon, parseToon } from './utils/toonUtils';
+import type { editor } from 'monaco-editor';
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState('dark');
@@ -23,7 +24,7 @@ const App: React.FC = () => {
       <div className={`app-container ${theme}`}>
         <Navbar toggleTheme={toggleTheme} theme={theme} />
         <Routes>
-          <Route path="/" element={<Studio />} />
+          <Route path="/" element={<Studio theme={theme} />} />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
       </div>
@@ -37,8 +38,8 @@ const Navbar: React.FC<{ toggleTheme: () => void; theme: string }> = ({ toggleTh
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/">Studio</Link>
-        <Link to="/about">About</Link>
+        <Link to="/" className="nav-button">Studio</Link>
+        <Link to="/about" className="nav-button">About</Link>
       </div>
       <div className="navbar-right">
         <button onClick={toggleTheme} className="theme-toggle">
@@ -58,11 +59,13 @@ const Navbar: React.FC<{ toggleTheme: () => void; theme: string }> = ({ toggleTh
   );
 };
 
-const Studio: React.FC = () => {
+const Studio: React.FC<{ theme: string }> = ({ theme }) => {
   const [jsonInput, setJsonInput] = useState(localStorage.getItem('jsonInput') || '');
   const [toonInput, setToonInput] = useState(localStorage.getItem('toonInput') || '');
   const [status, setStatus] = useState('Ready');
   const [activeEditor, setActiveEditor] = useState('json');
+  const jsonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const toonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
     localStorage.setItem('jsonInput', jsonInput);
@@ -138,15 +141,20 @@ const Studio: React.FC = () => {
             <FileInput onFileContent={setJsonInput} label="Upload" />
           </div>
         </div>
-        <Editor
-          height="100%"
-          language="json"
-          value={jsonInput}
-          onMount={() => setActiveEditor('json')}
-          onChange={(value) => setJsonInput(value || '')}
-          theme="vs-dark"
-          options={{ minimap: { enabled: false }, automaticLayout: true }}
-        />
+        <div style={{ flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
+          <Editor
+            height="100%"
+            language="json"
+            value={jsonInput}
+            onMount={(editor) => {
+              jsonEditorRef.current = editor;
+              editor.onDidFocusEditorWidget(() => setActiveEditor('json'));
+            }}
+            onChange={(value) => setJsonInput(value || '')}
+            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            options={{ minimap: { enabled: false }, automaticLayout: true }}
+          />
+        </div>
       </section>
 
       <section className="panel">
@@ -159,15 +167,20 @@ const Studio: React.FC = () => {
             <FileInput onFileContent={setToonInput} label="Upload" />
           </div>
         </div>
-        <Editor
-          height="100%"
-          language="yaml"
-          value={toonInput}
-          onMount={() => setActiveEditor('toon')}
-          onChange={(value) => setToonInput(value || '')}
-          theme="vs-dark"
-          options={{ minimap: { enabled: false }, automaticLayout: true }}
-        />
+        <div style={{ flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
+          <Editor
+            height="100%"
+            language="yaml"
+            value={toonInput}
+            onMount={(editor) => {
+              toonEditorRef.current = editor;
+              editor.onDidFocusEditorWidget(() => setActiveEditor('toon'));
+            }}
+            onChange={(value) => setToonInput(value || '')}
+            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            options={{ minimap: { enabled: false }, automaticLayout: true }}
+          />
+        </div>
       </section>
       <div className="controls">
             <button onClick={handleJsonToToon}>JSON ➝ TOON</button>
