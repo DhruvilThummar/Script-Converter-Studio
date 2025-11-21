@@ -59,3 +59,7 @@ To run the angular-app, run the following command:
 cd angular-app
 npm start
 ```
+
+## Contributing
+
+We welcome contributions to this project. Please feel free to open a pull request or an issue.
