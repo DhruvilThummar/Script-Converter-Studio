@@ -1,16 +1,36 @@
-.about-page-content {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-  animation: fadeIn 0.5s ease-in-out;
+.about-container {
+  padding: 20px;
 }
 
-.about-page-content h2 {
-  font-size: 2rem;
+.collapsible {
   margin-bottom: 1rem;
+  border: 1px solid #1f2937;
+  border-radius: 0.5rem;
 }
 
-.about-page-content p {
+.collapsible-header {
+  background-color: #0f172a;
+  padding: 1rem;
+  width: 100%;
+  text-align: left;
+  border: none;
+  color: inherit;
   font-size: 1.1rem;
-  line-height: 1.6;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsible-header .arrow {
+  transition: transform 0.3s ease;
+}
+
+.collapsible-header .arrow.open {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  padding: 1rem;
 }
