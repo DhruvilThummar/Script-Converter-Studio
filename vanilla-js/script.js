@@ -129,7 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             newObj[key.trim()] = value;
                             parentObj.push(newObj);
                             parentStack.push({[indent]: newObj});
-                        } else {
+                        } else if(itemContent === ''){
+                            const newObj = {};
+                            parentObj.push(newObj);
+                            parentStack.push({[indent]: newObj});
+                        }else {
                             parentObj.push(itemContent);
                         }
                     } else {

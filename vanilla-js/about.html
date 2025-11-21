@@ -90,6 +90,51 @@ database:
                 </div>
             </div>
         </section>
+
+        <section id="comparison">
+            <h2>JSON vs. TOON</h2>
+            <div class="comparison-grid">
+                <div class="card">
+                    <h3>JSON (JavaScript Object Notation)</h3>
+                    <p>A lightweight data-interchange format that is easy for humans to read and write and easy for machines to parse and generate. It is based on a subset of the JavaScript Programming Language, Standard ECMA-262 3rd Edition - December 1999.</p>
+                    <pre class="code-block">
+{
+  "name": "Project Hermes",
+  "version": "1.0.0",
+  "is_active": true,
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "admin"
+  }
+}</pre>
+                </div>
+                <div class="card">
+                    <h3>TOON (Token-Oriented Object Notation)</h3>
+                    <p>A human-friendly data serialization format. It is designed to be easy to read and write, and its syntax is more concise than JSON for certain types of data. It is ideal for configuration files and other situations where human readability is a top priority.</p>
+                    <pre class="code-block">
+name: Project Hermes
+version: 1.0.0
+is_active: true
+database:
+  host: localhost
+  port: 5432
+  user: admin</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>What is the main advantage of TOON over JSON?</h3>
+                <p>TOON's main advantage is its readability. Its syntax is cleaner and more concise than JSON's, making it easier for humans to read and write. This is especially true for configuration files and other data that is primarily meant for human consumption.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Is TOON a replacement for JSON?</h3>
+                <p>No, TOON is not a replacement for JSON. JSON is a well-established standard with broad support across many programming languages and platforms. TOON is a newer format that is designed for specific use cases where human readability is a top priority. For machine-to-machine communication, JSON is still the better choice in most cases.</p>
+            </div>
+        </section>
     </main>
     <script src="script.js"></script>
 </body>
