@@ -95,11 +95,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const lines = toon.trim().split('\n');
             let obj = {};
             const parentStack = [{-1: obj}];
+            let multiLineKey = null;
+            let multiLineValue = '';
 
             for (const line of lines) {
                 const indent = line.match(/^\s*/)[0].length;
                 const content = line.trim();
                 
+                if (multiLineKey && indent > Object.keys(parentStack[parentStack.length - 1])[0]) {
+                    multiLineValue += '\n' + content;
+                    continue;
+                } else if (multiLineKey) {
+                    Object.values(parentStack[parentStack.length - 1])[0][multiLineKey] = multiLineValue;
+                    multiLineKey = null;
+                    multiLineValue = '';
+                }
+
                 if (!content) continue;
 
                 while (indent <= Object.keys(parentStack[parentStack.length - 1])[0]) {
@@ -108,31 +119,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let parentObj = Object.values(parentStack[parentStack.length - 1])[0];
 
-                if (content.startsWith('-')) { // Array item
+                if (content.startsWith('-')) {
                     const itemContent = content.substring(1).trim();
-                    if (!Array.isArray(parentObj)) {
-                        // This case needs more robust handling depending on expected TOON structure
+                    if (Array.isArray(parentObj)) {
+                        if(itemContent.includes(':')){
+                            const [key, ...valueParts] = itemContent.split(':');
+                            const value = valueParts.join(':').trim();
+                            const newObj = {};
+                            newObj[key.trim()] = value;
+                            parentObj.push(newObj);
+                            parentStack.push({[indent]: newObj});
+                        } else {
+                            parentObj.push(itemContent);
+                        }
                     } else {
-                        parentObj.push(itemContent); // Simplified, assumes simple values
+                        // This case needs more robust handling depending on expected TOON structure
                     }
                 } else {
                     const [key, ...valueParts] = content.split(':');
                     const value = valueParts.join(':').trim();
 
-                    if (value === '') { // Likely a new object or array
-                        if (line.includes('[]') || line.includes('[2]')) { // Basic array detection
+                    if (value === '') {
+                        if (line.includes('[]') || line.includes('[2]')) {
                             const newArr = [];
-                            parentObj[key.trim()] = newArr;
+                            parentObj[key.trim().replace('[]', '').replace('[2]','')] = newArr;
                             parentStack.push({[indent]: newArr});
                         } else {
-                            const newObj = {};
-                            parentObj[key.trim()] = newObj;
-                            parentStack.push({[indent]: newObj});
+                            multiLineKey = key.trim();
+                            multiLineValue = '';
                         }
                     } else {
                         parentObj[key.trim()] = value;
                     }
                 }
+            }
+            if (multiLineKey) {
+                Object.values(parentStack[parentStack.length - 1])[0][multiLineKey] = multiLineValue;
             }
 
             return obj;
@@ -176,7 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnToonSample.addEventListener('click', () => {
-            toonInput.value = `🎬 Title: Project Alpha\n📍 Setting: Lab 42\n\n👥 Characters[]:\n  - name: Alice\n    role: Admin\n  - name: Bob\n    role: User`;
+            fetch('sample.toon')
+                .then(response => response.text())
+                .then(data => {
+                    toonInput.value = data;
+                });
         });
 
         btnCopy.addEventListener('click', () => {
