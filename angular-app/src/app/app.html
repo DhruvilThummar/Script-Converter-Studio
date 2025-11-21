@@ -1,0 +1,142 @@
+<header class="mobile-header">
+  <div class="logo-container">
+    <div class="logo-img"><img src="/assist/logo.svg" alt="JSON ⇄ TOON" /></div>
+    <span>JSON ⇄ TOON</span>
+  </div>
+  <button class="mobile-menu-btn" (click)="sidebarOpen = !sidebarOpen">☰</button>
+</header>
+
+<aside class="sidebar" [class.open]="sidebarOpen">
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <div class="logo-img">
+        <img src="/assist/logo.svg" alt="JSON ⇄ TOON" />
+      </div>
+      <span>JSON ⇄ TOON</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-item" [class.active]="activeNav === '#converter'" (click)="handleNavClick('#converter')">
+      <span>🧰</span> Converter
+    </div>
+    <div class="nav-item" [class.active]="activeNav === '#output-section'" (click)="handleNavClick('#output-section')">
+      <span>📤</span> Output
+    </div>
+    <div class="nav-item" [class.active]="activeNav === '#about'" (click)="handleNavClick('#about')">
+      <span>🧬</span> TOON Data Type
+    </div>
+
+    <div class="nav-spacer"></div>
+
+    <button class="nav-item" (click)="toggleTheme()">
+      <span id="themeIcon">{{ theme === 'light' ? '🌞' : '🌙' }}</span>
+      <span id="themeLabel">{{ theme === 'light' ? 'Day Mode' : 'Night Mode' }}</span>
+    </button>
+  </nav>
+</aside>
+
+<main class="main-content">
+  <section id="converter">
+    <h1>Converter Studio</h1>
+    <p class="section-description">
+      Flip between JSON and TOON formats.
+    </p>
+
+    <div class="mode-switcher">
+      <button class="mode-btn" [class.active]="mode === 'json'" (click)="mode = 'json'">
+        <span>🧩</span> JSON ➝ TOON
+      </button>
+      <button class="mode-btn" [class.active]="mode === 'toon'" (click)="mode = 'toon'">
+        <span>🎬</span> TOON ➝ JSON
+      </button>
+    </div>
+
+    <div class="grid">
+      <div class="card" [class.inactive]="mode !== 'json'">
+        <div class="card-header">
+          <strong>JSON Input</strong>
+          <span class="card-tag">Source</span>
+        </div>
+        <textarea [(ngModel)]="jsonInput" placeholder='''{
+"title": "Project Alpha",
+"setting": "Lab 42",
+"characters": [
+{ "name": "Alice", "role": "Admin" },
+{ "name": "Bob", "role": "User" }
+]
+}'''></textarea>
+        <div class="btn-container">
+          <button class="btn btn-primary" (click)="handleJsonToToon()" [disabled]="mode !== 'json'">
+            Convert & Scroll
+          </button>
+          <button class="btn btn-ghost" (click)="jsonInput = ''">Clear</button>
+        </div>
+      </div>
+
+      <div class="card" [class.inactive]="mode !== 'toon'">
+        <div class="card-header">
+          <strong>TOON Input</strong>
+          <span class="card-tag">Target</span>
+        </div>
+        <textarea [(ngModel)]="toonInput" placeholder="🎬 Title: Project Alpha&#10;📍 Setting: Lab 42&#10;&#10;👥 Characters:&#10;• Alice — Admin&#10;• Bob — User"></textarea>
+        <div class="btn-container">
+          <button class="btn btn-primary" (click)="handleToonToJson()" [disabled]="mode !== 'toon'">
+            Convert & Scroll
+          </button>
+          <button class="btn btn-ghost" (click)="toonInput = ''">Clear</button>
+          <button class="btn btn-ghost sample-btn" (click)="fillSampleToon()">
+            ✨ Fill Sample TOON
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="output-section">
+    <h3>Final Output</h3>
+    <div class="card">
+      <pre id="outputBox">{{ output }}</pre>
+    </div>
+    <button class="btn btn-ghost" (click)="handleCopy()">📋 Copy Output</button>
+  </section>
+
+  <section id="about">
+    <h2>🧬 What is TOON?</h2>
+    <p class="section-description">
+      <strong>Token-Oriented Object Notation</strong>
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Tabular Arrays</h3>
+        <p class="card-description">
+          TOON handles lists of objects like CSVs to save space.
+        </p>
+        <pre class="code-block">
+users[2]:
+id,   name,   role
+101,  Alice,  Admin
+102,  Bob,    User</pre>
+      </div>
+
+      <div class="card">
+        <h3>Clean Syntax</h3>
+        <p class="card-description">
+          Indentation replaces nesting braces.
+        </p>
+        <pre class="code-block">
+config:
+  debug: true
+  version: 1.0
+  tags:
+    - stable
+    - production</pre>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 JSON ⇄ TOON Studio
+  </footer>
+</main>

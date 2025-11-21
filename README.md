@@ -1,156 +1,61 @@
-# JSON ⇄ TOON Studio
+# Project Title
 
-A minimal, single-page **JSON ⇄ TOON converter** built in vanilla HTML, CSS, and JavaScript.
+This is a simple project that contains a vanilla-js app, a react-ts-app, and an angular-app.
 
-It lets you:
+## Getting Started
 
-- Convert **JSON ➝ TOON** (Token-Oriented Object Notation) using a clean, indentation-based format
-- Convert **TOON ➝ JSON** for the cinematic-style TOON preset
-- Switch between **dark / light** themes
-- Work on **desktop and mobile** with a responsive layout
-- Auto-save your inputs using `localStorage`
+To get started, you will need to have Node.js and npm installed on your machine. You will also need to have git installed.
 
----
-
-## 🧩 What is TOON?
-
-**TOON (Token-Oriented Object Notation)** is a human-friendly way to represent structured data using:
-
-- **Indentation instead of braces**  
-- **Bullets and labels** for lists and objects  
-- **Tabular-style arrays** for compact representation
-
-Example:
-
-```toon
-users[2]:
-id,   name,   role
-101,  Alice,  Admin
-102,  Bob,    User
-```
-
-- And a config-style object:
-```
-config:
-  debug: true
-  version: 1.0
-  tags:
-    - stable
-    - production
-```
-
-- The app also ships with a cinematic TOON preset for stories:
+Once you have those installed, you can clone this repository to your local machine.
 
 ```
-🎬 Title: Project Alpha
-📍 Setting: Lab 42
-
-👥 Characters:
-• Alice — Admin
-• Bob — User
+git clone <repository-url>
 ```
 
-## 🚀 Features
-1. JSON ➝ TOON (Generic)
-- Paste any valid JSON in the JSON Input panel.
-- Click “Convert & Scroll”.
-- The app uses a recursive jsonToToonGeneric() function to:
-- Handle nested objects
-- Handle arrays (with **-** bullets and **item1**, **item2**, …)
-- Indent child properties for readability
-The generated TOON is shown in:
--- The TOON Input panel
--- The Final Output box (with a “Copy Output” button)
-2. TOON ➝ JSON (Cinematic Preset)
-The TOON ➝ JSON converter works with the cinematic-style format:
-```
-🎬 Title: Project Alpha
-📍 Setting: Lab 42
+Once you have cloned the repository, you can navigate to the project directory and install the dependencies for each project.
 
-👥 Characters:
-• Alice — Admin
-• Bob — User
-```
+### Vanilla-js App
 
-** The parser: **
+There are no dependencies to install for the vanilla-js app.
 
-- Extracts title and setting
-- Parses bullet lines (• Name — Role)
-- Produces JSON like:
+### React-ts-app
+
+To install the dependencies for the react-ts-app, run the following command:
 
 ```
-{
-  "title": "Project Alpha",
-  "setting": "Lab 42",
-  "characters": [
-    { "name": "Alice", "role": "Admin" },
-    { "name": "Bob",  "role": "User" }
-  ]
-}
+cd react-ts-app
+npm install
 ```
 
-- **Note:** TOON ➝ JSON currently supports this specific preset format. The generic reverse parser is planned for a future version.
+### Angular-app
 
-## 🧱 UI & UX
+To install the dependencies for the angular-app, run the following command:
 
-- Two modes: JSON ➝ TOON and TOON ➝ JSON
--Side navigation:
-- Converter
-- Output
-- TOON Data Type (docs section)
-- Dark / Light theme toggle with emoji:
-- 🌙 Night Mode
-- 🌞 Day Mode
-- Mobile-friendly:
-- Fixed top bar
-- Drawer-style sidebar for small screens
--Output tools:
--- “📋 Copy Output” button
-- Clear buttons for both inputs
-- “✨ Fill Sample TOON” button to quickly load an example TOON
-
-## 💾 Persistence
-
-The app uses localStorage to remember:
-- Last JSON Input
-- Last TOON Input
-- Last selected theme (dark or light)
-So when you refresh the page, your work and theme preference remain.
-
-## 🛠️ Tech Stack
-
-- HTML5 – single page app
-- CSS3 – custom glassmorphism-style UI with responsive layout
-- Vanilla JavaScript – for:
--- Mode switching
--- Parsing and conversion
--- Clipboard copy
--- Theme toggling
--- LocalStorage persistence
-No frameworks, no build tools.
-
-## 🧪 How to Run Locally
-
-1.Clone or download the project:
 ```
-git clone https://github.com/<your-username>/json-toon-studio.git
-cd json-toon-studio
+cd angular-app
+npm install
 ```
 
-2.Make sure the main file is named:
+## Running the Apps
+
+### Vanilla-js App
+
+To run the vanilla-js app, you can open the `index.html` file in your browser.
+
+### React-ts-app
+
+To run the react-ts-app, run the following command:
+
 ```
-index.html
+cd react-ts-app
+npm start
 ```
 
-3.Open **index.html** in your browser:
-- Double-click it, or
-- Right-click → “Open with” → your browser
-That’s it. No server or build step required.
+### Angular-app
 
-## 🔮 Future Ideas
+To run the angular-app, run the following command:
 
-- More robust TOON ➝ JSON parser for generic TOON syntax
-- Multiple TOON presets (config-style, CSV-style, narrative-style)
-- Export / Import as files (.json, .toon)
--Validation and linting for TOON syntax
--Keyboard shortcuts (Ctrl+Enter to convert, etc.)
+```
+cd angular-app
+npm start
+```
