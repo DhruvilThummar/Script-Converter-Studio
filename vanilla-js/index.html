@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>JSON to TOON Converter | Efficient Data Transformation</title>
+    <meta name="theme-color" content="#0f172a" />
+    <meta
+      name="description"
+      content="Effortlessly convert JSON data to the TOON format. Our online tool provides a fast, efficient, and user-friendly solution for all your data conversion needs."
+    />
+    <meta name="keywords" content="JSON, TOON, converter, online tool, data transformation, efficient, user-friendly, developer tools" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://json-toon-converter.com" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="JSON to TOON Converter | Efficient Data Transformation" />
+    <meta property="og:description" content="Effortlessly convert JSON data to the TOON format with our fast and efficient online tool." />
+    <meta property="og:image" content="favicon.ico" />
+    <meta property="og:url" content="https://json-toon-converter.com" />
+    <meta property="og:type" content="website" />
+
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "JSON to TOON Converter",
+        "operatingSystem": "All",
+        "applicationCategory": "DeveloperApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0"
+        },
+        "description": "A free online tool to convert data between JSON and TOON formats.",
+        "url": "https://json-toon-converter.com"
+      }
+    </script>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="assist/logo.svg" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header class="mobile-header">
+      <div class="logo-container">
+        <div class="logo-img"><img src="assist/logo.svg" alt="JSON ⇄ TOON" /></div>
+        <span>JSON ⇄ TOON</span>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-img">
+                    <img src="assist/logo.svg" alt="JSON ⇄ TOON" />
+                </div>
+                <span>JSON ⇄ TOON</span>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="nav-item active">🔄 Converter</a></li>
+                <li><a href="about.html" class="nav-item">🧬 About TOON</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="theme-switcher">
+                <label for="themeToggle" class="theme-toggle-label" id="themeLabel">Night Mode</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="themeToggle" class="theme-toggle" />
+                    <label for="themeToggle"></label>
+                </div>
+                <span class="theme-icon" id="themeIcon">🌙</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+      <section id="converter">
+        <h1>Converter Studio</h1>
+        <p class="section-description">
+          Flip between JSON and TOON formats.
+        </p>
+
+        <div class="mode-switcher">
+          <button class="mode-btn active" id="modeJson">
+            <span>🧩</span> JSON ➝ TOON
+          </button>
+          <button class="mode-btn" id="modeToon">
+            <span>🎬</span> TOON ➝ JSON
+          </button>
+        </div>
+
+        <div class="grid">
+          <div class="card" id="jsonCard">
+            <div class="card-header">
+              <strong>JSON Input</strong>
+              <span class="card-tag">Source</span>
+            </div>
+            <textarea
+              id="jsonInput"
+              placeholder='''{
+  "title": "Project Alpha",
+  "setting": "Lab 42",
+  "characters": [
+    { "name": "Alice", "role": "Admin" },
+    { "name": "Bob", "role": "User" }
+  ]
+}'''
+            ></textarea>
+            <div class="btn-container">
+              <button class="btn btn-primary" id="btnJsonToToon">
+                Convert & Scroll
+              </button>
+              <button class="btn btn-ghost" id="btnJsonClear">Clear</button>
+            </div>
+          </div>
+
+          <div class="card inactive" id="toonCard">
+            <div class="card-header">
+              <strong>TOON Input</strong>
+              <span class="card-tag">Target</span>
+            </div>
+            <textarea
+              id="toonInput"
+              placeholder="🎬 Title: Project Alpha&#10;📍 Setting: Lab 42&#10;&#10;👥 Characters:&#10;• Alice — Admin&#10;• Bob — User"
+            ></textarea>
+            <div class="btn-container">
+              <button class="btn btn-primary" id="btnToonToJson" disabled>
+                Convert & Scroll
+              </button>
+              <button class="btn btn-ghost" id="btnToonClear">Clear</button>
+              <button class="btn btn-ghost sample-btn" id="btnToonSample">
+                ✨ Fill Sample TOON
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="output-section">
+        <h3>Final Output</h3>
+        <div class="card">
+          <pre id="outputBox">Waiting for input...</pre>
+        </div>
+        <button class="btn btn-ghost" id="btnCopy">📋 Copy Output</button>
+      </section>
+
+      <footer>
+        © 2025 JSON ⇄ TOON Studio
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

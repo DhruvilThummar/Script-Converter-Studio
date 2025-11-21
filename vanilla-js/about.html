@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About TOON | JSON ⇄ TOON Converter</title>
+    <meta name="description" content="Learn about Token-Oriented Object Notation (TOON), a human-readable data format." />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="mobile-header">
+        <div class="logo-container">
+            <div class="logo-img"><img src="assist/logo.svg" alt="JSON ⇄ TOON" /></div>
+            <span>JSON ⇄ TOON</span>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-img">
+                    <img src="assist/logo.svg" alt="JSON ⇄ TOON" />
+                </div>
+                <span>JSON ⇄ TOON</span>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="nav-item">🔄 Converter</a></li>
+                <li><a href="about.html" class="nav-item active">🧬 About TOON</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="theme-switcher">
+                <label for="themeToggle" class="theme-toggle-label" id="themeLabel">Night Mode</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="themeToggle" class="theme-toggle" />
+                    <label for="themeToggle"></label>
+                </div>
+                <span class="theme-icon" id="themeIcon">🌙</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content">
+        <section id="about">
+            <h2>🧬 What is TOON?</h2>
+            <p class="section-description">
+                <strong>Token-Oriented Object Notation</strong> is a data serialization format designed for human readability and ease of use. It aims to be more intuitive than JSON for certain types of data, particularly configurations and hierarchical information.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>Core Principles</h3>
+                    <ul class="card-list">
+                        <li><strong>Readability First:</strong> Syntax is minimal and clean, resembling a simple text file.</li>
+                        <li><strong>Indentation-Based Hierarchy:</strong> Nested objects are defined by indentation, like Python or YAML.</li>
+                        <li><strong>Key-Value Pairs:</strong> Uses a colon (`:`) to separate keys and values.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Tabular Arrays</h3>
+                    <p class="card-description">
+                        TOON has special syntax for lists of objects, making them compact and easy to read, similar to a CSV file. This is a key feature that distinguishes it from JSON.
+                    </p>
+                    <pre class="code-block">
+users[2]:
+id,   name,   role
+101,  Alice,  Admin
+102,  Bob,    User</pre>
+                </div>
+                <div class="card">
+                    <h3>Simple Syntax</h3>
+                    <p class="card-description">For simple key-value data, the syntax is extremely straightforward.</p>
+                    <pre class="code-block">
+name: Project Hermes
+version: 1.0.0
+is_active: true</pre>
+                </div>
+                <div class="card">
+                    <h3>Nested Objects</h3>
+                    <p class="card-description">Indentation is used to represent nested data structures clearly.</p>
+                    <pre class="code-block">
+database:
+  host: localhost
+  port: 5432
+  user: admin</pre>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

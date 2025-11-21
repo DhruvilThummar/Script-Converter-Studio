@@ -6,11 +6,7 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    # pkgs.go
-    # pkgs.python311
-    # pkgs.python311Packages.pip
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
+    pkgs.nodejs_20
   ];
 
   # Sets environment variables in the workspace
@@ -25,16 +21,20 @@
     previews = {
       enable = true;
       previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
+        react-app = {
+          command = ["npm" "--prefix" "react-ts-app" "start"];
+          manager = "web";
+          env = {
+            PORT = "$PORT";
+          };
+        };
+        angular-app = {
+          command = ["npm" "--prefix" "angular-app" "start"];
+          manager = "web";
+          env = {
+            PORT = "$PORT";
+          };
+        };
       };
     };
 
@@ -42,14 +42,11 @@
     workspace = {
       # Runs when a workspace is first created
       onCreate = {
-        # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
+        npm-install-react = "npm --prefix react-ts-app install";
+        npm-install-angular = "npm --prefix angular-app install";
       };
-      # Runs when the workspace is (re)started
-      onStart = {
-        # Example: start a background task to watch and re-build backend code
-        # watch-backend = "npm run watch-backend";
-      };
+      # Runs when the workspace is (re)started)
+      onStart = {};
     };
   };
 }
