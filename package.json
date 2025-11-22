@@ -2,7 +2,7 @@
   "name": "toon-json-converter",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://{DhruvilThummar}.github.io/{Script-Converter-Studio}",
+  "homepage": "https://dhruvilthummar.github.io/Script-Converter-Studio",
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@types/jest": "^27.5.2",
