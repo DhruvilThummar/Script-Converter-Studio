@@ -7,8 +7,8 @@
 
 - This is a free, online, and open-source tool to convert between TOON and JSON formats.
 - It provides a simple and intuitive interface to edit, validate, and convert your data with ease.
-- The project is built with React, TypeScript, and Monaco Editor to provide a fast and reliable experience.
-
+- The project is built with React, TypeScript, and Monaco Editor to provide a fast and reliable experience. <BR>
+[![pages-build-deployment](https://github.com/DhruvilThummar/Script-Converter-Studio/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/DhruvilThummar/Script-Converter-Studio/actions/workflows/pages/pages-build-deployment)
 ---
 
 # 💻 Tech Stack
