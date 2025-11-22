@@ -1,21 +1,22 @@
+// src/App.tsx
 import React, {
   useState,
   useEffect,
   useCallback,
-  useRef,
+  useRef
 } from 'react';
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Routes,
   Route,
-  Link,
+  Link
 } from 'react-router-dom';
+
 import './App.css';
 import AboutPage from './AboutPage';
-import LandingPage from './LandingPage';
 import DownloadButton from './DownloadButton';
-import Editor from '@monaco-editor/react';
 import FileInput from './FileInput';
+import Editor from '@monaco-editor/react';
 import { jsonToToon, parseToon } from './utils/toonUtils';
 import type { editor } from 'monaco-editor';
 
@@ -44,76 +45,66 @@ const App: React.FC = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  // ✅ IMPORTANT: basename for GitHub Pages
+  const basename =
+    process.env.NODE_ENV === 'production'
+      ? '/Script-Converter-Studio'
+      : '/';
+
   return (
-    <Router>
+    <BrowserRouter basename={basename}>
       <div className={`app-container ${theme}`}>
         <Navbar toggleTheme={toggleTheme} theme={theme} />
         <Routes>
-          <Route path="/" element={<LandingPage theme={theme} />} />
-          <Route path="/studio" element={<Studio theme={theme} />} />
+          {/* Direct home page = Studio */}
+          <Route path="/" element={<Studio theme={theme} />} />
           <Route path="/about" element={<AboutPage />} />
+          {/* Optional: redirect unknown paths to home */}
+          <Route path="*" element={<Studio theme={theme} />} />
         </Routes>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 };
 
-const Navbar: React.FC<{
-  toggleTheme: () => void;
-  theme: 'dark' | 'light';
-}> = ({ toggleTheme, theme }) => {
+const Navbar: React.FC<{ toggleTheme: () => void; theme: string }> = ({
+  toggleTheme,
+  theme,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const closeMenu = () => setIsMenuOpen(false);
-
   return (
-    <>
-      <nav className="navbar">
-        <div className="navbar-left">
-          <Link to="/" className="brand">
-            <span className="brand-mark" />
-            TOON / JSON Studio
-          </Link>
-          <div className="navbar-links">
-            <Link to="/studio">Studio</Link>
-            <Link to="/about">About</Link>
-          </div>
-        </div>
-
-        <div className="navbar-right">
-          <button
-            onClick={toggleTheme}
-            className="nav-button theme-toggle"
-            type="button"
-          >
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </button>
-
-          <button
-            className="hamburger"
-            type="button"
-            onClick={() => setIsMenuOpen(open => !open)}
-            aria-label="Toggle navigation menu"
-          >
-            ☰
-          </button>
-        </div>
-      </nav>
-
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/" className="nav-button">
+          Studio
+        </Link>
+        <Link to="/about" className="nav-button">
+          About
+        </Link>
+      </div>
+      <div className="navbar-right">
+        <button onClick={toggleTheme} className="theme-toggle">
+          {theme === 'dark' ? 'Light' : 'Dark'} Mode
+        </button>
+        <button
+          className="hamburger"
+          onClick={() => setIsMenuOpen(open => !open)}
+        >
+          &#9776;
+        </button>
+      </div>
       {isMenuOpen && (
         <div className="mobile-menu">
-          <Link to="/" onClick={closeMenu}>
-            Home
-          </Link>
-          <Link to="/studio" onClick={closeMenu}>
+          <Link to="/" onClick={() => setIsMenuOpen(false)}>
             Studio
           </Link>
-          <Link to="/about" onClick={closeMenu}>
+          <Link to="/about" onClick={() => setIsMenuOpen(false)}>
             About
           </Link>
         </div>
       )}
-    </>
+    </nav>
   );
 };
 
@@ -122,7 +113,7 @@ interface EditorStats {
   chars: number;
 }
 
-const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
+const Studio: React.FC<{ theme: string }> = ({ theme }) => {
   const [jsonInput, setJsonInput] = useState(
     localStorage.getItem('jsonInput') || ''
   );
@@ -130,9 +121,7 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
     localStorage.getItem('toonInput') || ''
   );
   const [status, setStatus] = useState('Ready');
-  const [activeEditor, setActiveEditor] = useState<'json' | 'toon'>(
-    'json'
-  );
+  const [activeEditor, setActiveEditor] = useState<'json' | 'toon'>('json');
   const [autoConvert, setAutoConvert] = useState(true);
 
   const [jsonStats, setJsonStats] = useState<EditorStats>({
@@ -144,14 +133,10 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
     chars: 0,
   });
 
-  const jsonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
-    null
-  );
-  const toonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(
-    null
-  );
+  const jsonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const toonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
-  // Persist to localStorage
+  // Persist
   useEffect(() => {
     localStorage.setItem('jsonInput', jsonInput);
   }, [jsonInput]);
@@ -162,16 +147,12 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
 
   // Stats
   useEffect(() => {
-    const lines = jsonInput
-      ? jsonInput.split(/\r\n|\r|\n/).length
-      : 0;
+    const lines = jsonInput ? jsonInput.split(/\r\n|\r|\n/).length : 0;
     setJsonStats({ lines, chars: jsonInput.length });
   }, [jsonInput]);
 
   useEffect(() => {
-    const lines = toonInput
-      ? toonInput.split(/\r\n|\r|\n/).length
-      : 0;
+    const lines = toonInput ? toonInput.split(/\r\n|\r|\n/).length : 0;
     setToonStats({ lines, chars: toonInput.length });
   }, [toonInput]);
 
@@ -205,7 +186,7 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
     }
   }, [toonInput]);
 
-  const handleAutoConvert = useCallback(() => {
+  const handleAutoConvertOnce = useCallback(() => {
     if (activeEditor === 'json') {
       handleJsonToToon();
     } else {
@@ -219,18 +200,18 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
 
     if (activeEditor === 'json') {
       if (!jsonInput.trim()) return;
-      const t = window.setTimeout(() => {
+      const t = setTimeout(() => {
         handleJsonToToon();
       }, 400);
-      return () => window.clearTimeout(t);
+      return () => clearTimeout(t);
     }
 
     if (activeEditor === 'toon') {
       if (!toonInput.trim()) return;
-      const t = window.setTimeout(() => {
+      const t = setTimeout(() => {
         handleToonToJson();
       }, 400);
-      return () => window.clearTimeout(t);
+      return () => clearTimeout(t);
     }
   }, [
     autoConvert,
@@ -291,141 +272,136 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
   };
 
   return (
-    <div className="studio-shell">
-      <header className="studio-header">
-        <div>
-          <h1>Conversion Studio</h1>
-          <p>
-            Paste your JSON or TOON on either side. Use live auto-convert or
-            manual controls below.
-          </p>
-        </div>
-        <div className="studio-summary">
-          <div className="summary-pill">
-            JSON: {jsonStats.lines} lines • {jsonStats.chars} chars
-          </div>
-          <div className="summary-pill">
-            TOON: {toonStats.lines} lines • {toonStats.chars} chars
-          </div>
-        </div>
-      </header>
-
-      <main className="layout">
-        {/* JSON Panel */}
-        <section className="panel">
-          <div className="panel-header">
-            <div className="panel-title">
-              <h2>JSON</h2>
-              <div className="panel-meta">
-                {jsonStats.lines} lines • {jsonStats.chars} chars
-              </div>
-            </div>
-            <div className="panel-actions">
-              <button type="button" onClick={loadSampleJson}>
-                Sample
-              </button>
-              <button type="button" onClick={prettyPrintJson}>
-                Pretty
-              </button>
-              <button type="button" onClick={() => setJsonInput('')}>
-                Clear
-              </button>
-              <button
-                type="button"
-                onClick={() => navigator.clipboard.writeText(jsonInput)}
-                disabled={!jsonInput}
-              >
-                Copy
-              </button>
-              <DownloadButton
-                content={jsonInput}
-                filename="data.json"
-                label="Download"
-              />
-              <FileInput onFileContent={setJsonInput} label="Upload" />
+    <main className="layout">
+      {/* JSON Panel */}
+      <section className="panel">
+        <div className="panel-header">
+          <div className="panel-title">
+            <h2>JSON</h2>
+            <div className="panel-meta">
+              {jsonStats.lines} lines • {jsonStats.chars} chars
             </div>
           </div>
-          <div className="editor-wrapper">
-            <Editor
-              height="100%"
-              language="json"
-              value={jsonInput}
-              onMount={editorInstance => {
-                jsonEditorRef.current = editorInstance;
-                editorInstance.onDidFocusEditorWidget(() =>
-                  setActiveEditor('json')
-                );
-              }}
-              onChange={value => setJsonInput(value || '')}
-              theme={theme === 'dark' ? 'vs-dark' : 'light'}
-              options={{
-                minimap: { enabled: false },
-                automaticLayout: true,
-              }}
+          <div className="panel-actions">
+            <button type="button" onClick={loadSampleJson}>
+              Sample
+            </button>
+            <button type="button" onClick={prettyPrintJson}>
+              Pretty
+            </button>
+            <button type="button" onClick={() => setJsonInput('')}>
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={() => navigator.clipboard.writeText(jsonInput)}
+              disabled={!jsonInput}
+            >
+              Copy
+            </button>
+            <DownloadButton
+              content={jsonInput}
+              filename="data.json"
+              label="Download"
             />
+            <FileInput onFileContent={setJsonInput} label="Upload" />
           </div>
-        </section>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            flex: '1 1 auto',
+            overflow: 'hidden',
+            height: '100%',
+          }}
+        >
+          <Editor
+            height="100%"
+            language="json"
+            value={jsonInput}
+            onMount={editorInstance => {
+              jsonEditorRef.current = editorInstance;
+              editorInstance.onDidFocusEditorWidget(() =>
+                setActiveEditor('json')
+              );
+            }}
+            onChange={value => setJsonInput(value || '')}
+            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            options={{
+              minimap: { enabled: false },
+              automaticLayout: true,
+            }}
+          />
+        </div>
+      </section>
 
-        {/* TOON Panel */}
-        <section className="panel">
-          <div className="panel-header">
-            <div className="panel-title">
-              <h2>TOON</h2>
-              <div className="panel-meta">
-                {toonStats.lines} lines • {toonStats.chars} chars
-              </div>
-            </div>
-            <div className="panel-actions">
-              <button type="button" onClick={trimToonLines}>
-                Tidy
-              </button>
-              <button type="button" onClick={() => setToonInput('')}>
-                Clear
-              </button>
-              <button
-                type="button"
-                onClick={() => navigator.clipboard.writeText(toonInput)}
-                disabled={!toonInput}
-              >
-                Copy
-              </button>
-              <DownloadButton
-                content={toonInput}
-                filename="data.toon"
-                label="Download"
-              />
-              <FileInput onFileContent={setToonInput} label="Upload" />
+      {/* TOON Panel */}
+      <section className="panel">
+        <div className="panel-header">
+          <div className="panel-title">
+            <h2>TOON</h2>
+            <div className="panel-meta">
+              {toonStats.lines} lines • {toonStats.chars} chars
             </div>
           </div>
-          <div className="editor-wrapper">
-            <Editor
-              height="100%"
-              language="yaml"
-              value={toonInput}
-              onMount={editorInstance => {
-                toonEditorRef.current = editorInstance;
-                editorInstance.onDidFocusEditorWidget(() =>
-                  setActiveEditor('toon')
-                );
-              }}
-              onChange={value => setToonInput(value || '')}
-              theme={theme === 'dark' ? 'vs-dark' : 'light'}
-              options={{
-                minimap: { enabled: false },
-                automaticLayout: true,
-              }}
+          <div className="panel-actions">
+            <button type="button" onClick={trimToonLines}>
+              Tidy
+            </button>
+            <button type="button" onClick={() => setToonInput('')}>
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={() => navigator.clipboard.writeText(toonInput)}
+              disabled={!toonInput}
+            >
+              Copy
+            </button>
+            <DownloadButton
+              content={toonInput}
+              filename="data.toon"
+              label="Download"
             />
+            <FileInput onFileContent={setToonInput} label="Upload" />
           </div>
-        </section>
-      </main>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            flex: '1 1 auto',
+            overflow: 'hidden',
+            height: '100%',
+          }}
+        >
+          <Editor
+            height="100%"
+            language="yaml"
+            value={toonInput}
+            onMount={editorInstance => {
+              toonEditorRef.current = editorInstance;
+              editorInstance.onDidFocusEditorWidget(() =>
+                setActiveEditor('toon')
+              );
+            }}
+            onChange={value => setToonInput(value || '')}
+            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            options={{
+              minimap: { enabled: false },
+              automaticLayout: true,
+            }}
+          />
+        </div>
+      </section>
 
+      {/* Floating Controls */}
       <div className="controls">
         <button type="button" onClick={handleJsonToToon}>
           JSON ➝ TOON
         </button>
         <button
           type="button"
-          onClick={handleAutoConvert}
+          onClick={handleAutoConvertOnce}
           className="auto-convert-button"
         >
           Auto (once)
@@ -452,7 +428,7 @@ const Studio: React.FC<{ theme: 'dark' | 'light' }> = ({ theme }) => {
       </div>
 
       <div id="status-bar">{status}</div>
-    </div>
+    </main>
   );
 };
 

@@ -8,7 +8,7 @@ interface DownloadButtonProps {
 
 const DownloadButton: React.FC<DownloadButtonProps> = ({ content, filename, label }) => {
   const handleDownload = () => {
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([content], { type: 'plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
