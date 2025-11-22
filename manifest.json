@@ -1,0 +1,16 @@
+{
+  "short_name": "TOON/JSON Converter",
+  "name": "TOON/JSON Converter",
+  "description": "A free, online, and open-source tool to convert between TOON and JSON formats. Edit, validate, and convert your data with ease.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
