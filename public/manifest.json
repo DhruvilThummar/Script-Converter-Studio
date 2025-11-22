@@ -4,17 +4,17 @@
   "description": "A free, online, and open-source tool to convert between TOON and JSON formats. Edit, validate, and convert your data with ease.",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "assist/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "assist/logo192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "assist/logo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

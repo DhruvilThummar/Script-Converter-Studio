@@ -1,36 +1,315 @@
-.about-container {
-  padding: 20px;
-}
+/* ===========================
+   THEME TOKENS
+   =========================== */
+   :root {
+    /* Core accent (primary glow color) */
+    --primary-color: #3b82f6;
+    --primary-color-rgb: 59, 130, 246;
+  
+    /* Secondary accent for gradient glow */
+    --primary-color-alt: #a855f7;
+    --primary-color-alt-rgb: 168, 85, 247;
+  
+    /* Gradient used for neon aura */
+    --glow-gradient: conic-gradient(
+      from 140deg,
+      rgba(59, 130, 246, 0.25),
+      rgba(168, 85, 247, 0.8),
+      rgba(34, 197, 94, 0.8),
+      rgba(59, 130, 246, 1),
+      rgba(168, 85, 247, 0.9)
+    );
+  
+    /* Surfaces & text */
+    --secondary-bg-color: #020617; /* dark card */
+    --secondary-bg-color-soft: #020617f2;
+    --border-color: rgba(148, 163, 184, 0.6);
+    --text-color: #e5e7eb;
+  
+    --transition-fast: 0.2s ease-out;
+    --transition-med: 0.35s ease-in-out;
+  }
+  
+  /* ===========================
+     ANIMATIONS
+     =========================== */
+  @keyframes neonPulse {
+    0% {
+      opacity: 0.55;
+      filter: blur(14px);
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      filter: blur(22px);
+      transform: scale(1.02);
+    }
+    100% {
+      opacity: 0.55;
+      filter: blur(14px);
+      transform: scale(1);
+    }
+  }
+  
+  /* ===========================
+     MAIN ABOUT CONTAINER
+     =========================== */
+  
+  .about-container {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    margin: 2.5rem auto;
+    padding: 2.5rem 2.1rem 2.3rem;
+  
+    background: var(--secondary-bg-color-soft);
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+  
+    box-shadow:
+      0 20px 55px rgba(15, 23, 42, 0.95),
+      0 0 0 1px rgba(15, 23, 42, 0.85);
+  
+    transition:
+      background-color var(--transition-med),
+      border-color var(--transition-med),
+      box-shadow var(--transition-med),
+      transform var(--transition-fast),
+      filter var(--transition-fast);
+  
+    color: var(--text-color);
+    overflow: hidden;
+  }
+  
+  /* Gradient glow aura */
+  .about-container::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: var(--glow-gradient);
+    z-index: -1;
+    opacity: 0.9;
+    filter: blur(18px);
+    animation: neonPulse 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  /* Inner shine layer */
+  .about-container::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.18), transparent 60%);
+    opacity: 0.65;
+    pointer-events: none;
+  }
 
-.collapsible {
-  margin-bottom: 1rem;
-  border: 1px solid #1f2937;
-  border-radius: 0.5rem;
-}
-
-.collapsible-header {
-  background-color: #0f172a;
-  padding: 1rem;
-  width: 100%;
-  text-align: left;
-  border: none;
-  color: inherit;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.collapsible-header .arrow {
-  transition: transform 0.3s ease;
-}
-
-.collapsible-header .arrow.open {
-  transform: rotate(180deg);
-}
-
-.collapsible-content {
-  padding: 1rem;
-}
+  
+  /* ===========================
+     LIGHT MODE VARIANT
+     (parent has .light)
+     =========================== */
+  
+  .light .about-container {
+    background: transparent;
+    border-color: rgba(148, 163, 184, 0.45);
+    box-shadow:
+      0 18px 46px rgba(15, 23, 42, 0.18),
+      0 0 0 1px rgba(148, 163, 184, 0.4);
+    filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.45));
+  }
+  
+  .light .about-container::before {
+    opacity: 0.75;
+    filter: blur(20px);
+  }
+  
+  .light .about-container::after {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.95), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.22), transparent 60%);
+    opacity: 0.75;
+  }
+  
+  .light .about-container,
+  .light .about-container p,
+  .light .about-container h1,
+  .light .about-container h2,
+  .light .about-container h3,
+  .light .about-container li,
+  .light .about-container th,
+  .light .about-container td {
+    color: #020617;
+  }
+  
+  /* ===========================
+     BANNER & FOOTER IMAGES
+     =========================== */
+  .about-container > img:first-of-type {
+    display: block;
+    width: 100%;
+    border-radius: 14px;
+    margin-bottom: 1.6rem;
+  }
+  
+  .about-container > img:last-of-type {
+    display: block;
+    width: 100%;
+    border-radius: 14px;
+    margin-top: 1.6rem;
+  }
+  
+  /* ===========================
+     SECTIONS
+     =========================== */
+  
+  .about-section {
+    margin-bottom: 2rem;
+  }
+  
+  .about-section:last-of-type {
+    margin-bottom: 1.4rem;
+  }
+  
+  /* ===========================
+     TYPOGRAPHY
+     =========================== */
+  
+  .about-section h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 0.9rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    position: relative;
+    letter-spacing: 0.03em;
+  }
+  
+  /* Accent bar under h2 */
+  .about-section h2::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 80px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      rgba(59, 130, 246, 1),
+      rgba(168, 85, 247, 1),
+      rgba(34, 197, 94, 1)
+    );
+  }
+  
+  .about-section h3 {
+    font-size: 1.05rem;
+    margin: 1.1rem 0 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  
+  .about-section p,
+  .about-section li {
+    font-size: 0.97rem;
+    line-height: 1.7;
+  }
+  
+  /* Lists */
+  .about-section ul,
+  .about-section ol {
+    padding-left: 1.3rem;
+    margin-top: 0.35rem;
+    margin-bottom: 0.9rem;
+  }
+  
+  .about-section li + li {
+    margin-top: 0.25rem;
+  }
+  
+  /* ===========================
+     BADGE ROWS (shield.io images)
+     =========================== */
+  
+  .about-section p img {
+    max-height: 32px;
+    margin: 0.25rem 0.4rem 0.25rem 0;
+    vertical-align: middle;
+  }
+  
+  .about-section p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  
+  /* ===========================
+     TABLE (Key Differences)
+     =========================== */
+  
+  .about-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.9rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    backdrop-filter: blur(6px);
+  }
+  
+  .about-section th,
+  .about-section td {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+  }
+  
+  .about-section th {
+    background: rgba(15, 23, 42, 0.95);
+    font-weight: 600;
+  }
+  
+  .about-section tr:nth-child(even) td {
+    background: rgba(15, 23, 42, 0.78);
+  }
+  
+  /* Light mode table tweak */
+  .light .about-section th {
+    background: rgba(241, 245, 249, 0.96);
+  }
+  
+  .light .about-section tr:nth-child(even) td {
+    background: rgba(226, 232, 240, 0.75);
+  }
+  
+  /* ===========================
+     RESPONSIVE
+     =========================== */
+  @media (max-width: 768px) {
+    .about-container {
+      padding: 1.9rem 1.3rem;
+      margin: 1.8rem 1.1rem;
+    }
+  
+    .about-section h2 {
+      font-size: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .about-container {
+      padding: 1.7rem 1rem;
+      margin: 1.5rem 0.75rem;
+    }
+  
+    .about-section table {
+      font-size: 0.9rem;
+    }
+  }
+  

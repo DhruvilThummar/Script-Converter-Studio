@@ -1,46 +1,103 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './AboutPage.css';
-
-const Collapsible: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div className="collapsible">
-      <button className="collapsible-header" onClick={toggleOpen}>
-        {title}
-        <span className={`arrow ${isOpen ? 'open' : ''}`}>&#9660;</span>
-      </button>
-      {isOpen && <div className="collapsible-content">{children}</div>}
-    </div>
-  );
-};
 
 const AboutPage: React.FC = () => {
   return (
     <div className="about-container">
-      <h1>About This Application</h1>
-      <p>This is a converter application that translates between two data formats: JSON and TOON.</p>
+      <img
+        src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=TOON%20/%20JSON%20Converter%20🚀&fontSize=40&fontAlignY=35&desc=A%20free,%20online,%20and%20open-source%20tool%20to%20convert%20between%20TOON%20and%20JSON%20formats.%20Edit,%20validate,%20and%20convert%20your%20data%20with%20ease.🚀&descAlignY=55&descAlign=50"
+        alt="Banner"
+        style={{ width: '100%' }}
+      />
 
-      <Collapsible title="JSON (JavaScript Object Notation)">
-        <p>JSON is a lightweight, text-based data-interchange format. It is easy for humans to read and write and easy for machines to parse and generate. It is based on a subset of the JavaScript Programming Language, Standard ECMA-262 3rd Edition - December 1999. JSON is a text format that is completely language independent but uses conventions that are familiar to programmers of the C-family of languages, including C, C++, C#, Java, JavaScript, Perl, Python, and many others. These properties make JSON an ideal data-interchange language.</p>
-      </Collapsible>
-
-      <Collapsible title="TOON (Typed Object-Oriented Notation)">
-        <p>TOON is a configuration file format that is designed to be more human-readable and expressive than JSON. It is a superset of YAML, which means any valid YAML is also valid TOON. TOON adds features such as types, schemas, and references to make it more powerful for defining complex data structures. It is particularly well-suited for configuration files and for defining data that has a clear schema.</p>
-      </Collapsible>
-
-      <Collapsible title="Key Differences">
+      <div className="about-section">
+        <h2>About This Project</h2>
         <ul>
-          <li><b>Readability:</b> TOON is generally considered more readable than JSON, especially for large and complex datasets.</li>
-          <li><b>Expressiveness:</b> TOON is more expressive than JSON, with support for features like comments, types, and schemas.</li>
-          <li><b>Strictness:</b> JSON is stricter than TOON, with a more limited set of data types and a more rigid syntax.</li>
-          <li><b>Popularity:</b> JSON is more widely used than TOON, especially in web applications and APIs.</li>
+          <li>This is a free, online, and open-source tool to convert between TOON and JSON formats.</li>
+          <li>It provides a simple and intuitive interface to edit, validate, and convert your data with ease.</li>
+          <li>The project is built with React, TypeScript, and Monaco Editor to provide a fast and reliable experience.</li>
         </ul>
-      </Collapsible>
+      </div>
+
+      <div className="about-section">
+        <h2>💻 Tech Stack</h2>
+        <h3>Languages & Core</h3>
+        <p>
+          <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
+          <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+          <img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E" alt="JavaScript" />
+          <img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
+          <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+        </p>
+        <h3>Tools & Platforms</h3>
+        <p>
+          <img src="https://img.shields.io/badge/Monaco%20Editor-007ACC.svg?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Monaco Editor" />
+          <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+          <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+        </p>
+      </div>
+
+      <div className="about-section">
+        <h2>🚀 Features</h2>
+        <ul>
+          <li><strong>Live Conversion</strong>: Convert between TOON and JSON in real-time.</li>
+          <li><strong>Syntax Highlighting</strong>: The editor supports syntax highlighting for both TOON and JSON.</li>
+          <li><strong>Error Highlighting</strong>: The editor will highlight any syntax errors in your TOON or JSON.</li>
+          <li><strong>File I/O</strong>: You can upload and download your TOON and JSON files.</li>
+          <li><strong>Themes</strong>: The editor supports both light and dark themes.</li>
+        </ul>
+      </div>
+
+      <div className="about-section">
+        <h2>📖 How to Use</h2>
+        <ol>
+          <li>Go to the website.</li>
+          <li>Enter your TOON or JSON in the editor.</li>
+          <li>The editor will automatically convert your data to the other format.</li>
+          <li>You can then download your converted data.</li>
+        </ol>
+      </div>
+
+      <div className="about-section">
+        <h2>🔑 Key Differences</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>TOON</th>
+              <th>JSON</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Syntax</strong></td>
+              <td>More relaxed, no quotes required around keys.</td>
+              <td>Strict, requires quotes around keys.</td>
+            </tr>
+            <tr>
+              <td><strong>Comments</strong></td>
+              <td>Allows for comments.</td>
+              <td>Does not allow for comments.</td>
+            </tr>
+            <tr>
+              <td><strong>Data Types</strong></td>
+              <td>Supports a wider range of data types.</td>
+              <td>Supports a limited range of data types.</td>
+            </tr>
+            <tr>
+              <td><strong>Readability</strong></td>
+              <td>Often more human-readable for simple data.</td>
+              <td>Can be more verbose but is machine-readable.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <img
+        src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=120&section=footer"
+        alt="Footer"
+        style={{ width: '100%' }}
+      />
     </div>
   );
 };
