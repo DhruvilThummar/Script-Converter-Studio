@@ -141,7 +141,7 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             <FileInput onFileContent={setJsonInput} label="Upload" />
           </div>
         </div>
-        <div style={{ flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
+        <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
           <Editor
             height="100%"
             language="json"
@@ -167,7 +167,7 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             <FileInput onFileContent={setToonInput} label="Upload" />
           </div>
         </div>
-        <div style={{ flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
+        <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', height: '100%' }}>
           <Editor
             height="100%"
             language="yaml"

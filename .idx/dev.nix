@@ -22,31 +22,13 @@
       enable = true;
       previews = {
         react-app = {
-          command = ["npm" "--prefix" "react-ts-app" "start"];
-          manager = "web";
-          env = {
-            PORT = "$PORT";
-          };
-        };
-        angular-app = {
-          command = ["npm" "--prefix" "angular-app" "start"];
+          command = ["npm" "start"];
           manager = "web";
           env = {
             PORT = "$PORT";
           };
         };
       };
-    };
-
-    # Workspace lifecycle hooks
-    workspace = {
-      # Runs when a workspace is first created
-      onCreate = {
-        npm-install-react = "npm --prefix react-ts-app install";
-        npm-install-angular = "npm --prefix angular-app install";
-      };
-      # Runs when the workspace is (re)started)
-      onStart = {};
     };
   };
 }
