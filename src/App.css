@@ -1,457 +1,495 @@
 /* ===========================
    Design Tokens (CSS Variables)
    =========================== */
-   :root {
-    /* Backgrounds */
-    --color-bg-dark: #020617;
-    --color-bg-dark-soft: radial-gradient(circle at top, #0b1120 0, #020617 55%);
-    --color-bg-light: #fff0f5;
-    --color-bg-light-soft: radial-gradient(circle at top, #fee2f2 0, #fff0f5 55%);
-  
-    /* Surfaces */
-    --color-surface-dark: #0f172a;
-    --color-surface-light: #f1f5f9;
-  
-    /* Borders */
-    --color-border-dark: #1f2937;
-    --color-border-dark-soft: #374151;
-    --color-border-light: #e2e8f0;
-    --color-border-light-soft: #cbd5e1;
-  
-    /* Text */
-    --color-text-dark: #e5e7eb;
-    --color-text-muted-dark: #9ca3af;
-    --color-text-light: #020617;
-    --color-text-muted-light: #6b7280;
-  
-    /* Accents */
-    --color-accent: #3b82f6;
-    --color-accent-rgb: 59, 130, 246;
-    --color-accent-soft: #e0f2fe;
-    --color-accent-alt: #a855f7;
-  
-    /* Semantic accents (for future use) */
-    --color-success: #16a34a;
-    --color-warning: #facc15;
-    --color-danger: #ef4444;
-  
-    /* Radii */
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-pill: 999px;
-  
-    /* Shadows */
-    --shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.35);
-    --shadow-subtle: 0 2px 6px rgba(15, 23, 42, 0.25);
-    --shadow-strong: 0 18px 45px rgba(15, 23, 42, 0.8);
-  
-    /* Transitions */
-    --transition-fast: 0.15s ease-out;
-    --transition-med: 0.25s ease;
+:root {
+  /* Backgrounds */
+  --color-bg-dark: #020617;
+  --color-bg-dark-soft: radial-gradient(circle at top, #0b1120 0, #020617 55%);
+  --color-bg-light: #fff0f5;
+  --color-bg-light-soft: radial-gradient(circle at top, #fee2f2 0, #fff0f5 55%);
+
+  /* Surfaces */
+  --color-surface-dark: #0f172a;
+  --color-surface-light: #f1f5f9;
+
+  /* Borders */
+  --color-border-dark: #1f2937;
+  --color-border-dark-soft: #374151;
+  --color-border-light: #e2e8f0;
+  --color-border-light-soft: #cbd5e1;
+
+  /* Text */
+  --color-text-dark: #e5e7eb;
+  --color-text-muted-dark: #9ca3af;
+  --color-text-light: #020617;
+  --color-text-muted-light: #6b7280;
+
+  /* Accents */
+  --color-accent: #3b82f6;
+  --color-accent-rgb: 59, 130, 246;
+  --color-accent-soft: #e0f2fe;
+  --color-accent-alt: #a855f7;
+
+  /* Semantic accents */
+  --color-success: #16a34a;
+  --color-warning: #facc15;
+  --color-danger: #ef4444;
+
+  /* Radii */
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.35);
+  --shadow-subtle: 0 2px 6px rgba(15, 23, 42, 0.25);
+  --shadow-strong: 0 18px 45px rgba(15, 23, 42, 0.8);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease-out;
+  --transition-med: 0.25s ease;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
-  
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      scroll-behavior: auto !important;
-      animation-duration: 0.001ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.001ms !important;
-    }
-  }
-  
-  /* ===========================
-     App Container / Themes
-     =========================== */
-  .app-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--color-bg-dark-soft);
-    color: var(--color-text-dark);
-    transition:
-      background var(--transition-med),
-      color var(--transition-med);
-  }
-  
-  .app-container.light {
-    background: var(--color-bg-light-soft);
-    color: var(--color-text-light);
-  }
-  
-  /* ===========================
-     Navbar
-     =========================== */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9rem 2rem;
-    border-bottom: 1px solid var(--color-border-dark);
-    background: linear-gradient(
-      to bottom,
-      rgba(15, 23, 42, 0.98),
-      rgba(15, 23, 42, 0.94)
-    );
-    box-shadow: var(--shadow-subtle);
-    transition:
-      background-color var(--transition-med),
-      border-color var(--transition-med),
-      box-shadow var(--transition-med);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    backdrop-filter: blur(10px);
-  }
-  
-  .app-container.light .navbar {
-    border-bottom-color: var(--color-border-light);
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(12px);
-  }
-  
-  /* Left nav links */
-  .navbar-left a {
-    margin-right: 1.5rem;
-    text-decoration: none;
-    color: inherit;
-    font-weight: 500;
-    font-size: 0.92rem;
-    letter-spacing: 0.01em;
-    transition:
-      color var(--transition-med),
-      transform var(--transition-fast),
-      text-shadow var(--transition-fast);
-  }
-  
-  .navbar-left a:hover {
-    color: var(--color-accent);
-    transform: translateY(-1px);
-    text-shadow: 0 0 10px rgba(var(--color-accent-rgb), 0.6);
-  }
-  
-  .navbar-left a:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-    border-radius: 0.4rem;
-  }
-  
-  /* Right nav */
+}
+
+/* ===========================
+   App Container / Themes
+   =========================== */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-dark-soft);
+  color: var(--color-text-dark);
+  transition:
+    background var(--transition-med),
+    color var(--transition-med);
+}
+
+.app-container.light {
+  background: var(--color-bg-light-soft);
+  color: var(--color-text-light);
+}
+
+/* ===========================
+   Navbar
+   =========================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 2rem;
+  border-bottom: 1px solid var(--color-border-dark);
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.98),
+    rgba(15, 23, 42, 0.94)
+  );
+  box-shadow: var(--shadow-subtle);
+  transition:
+    background-color var(--transition-med),
+    border-color var(--transition-med),
+    box-shadow var(--transition-med);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+}
+
+.app-container.light .navbar {
+  border-bottom-color: var(--color-border-light);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+/* Left nav links */
+.navbar-left a {
+  margin-right: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  transition:
+    color var(--transition-med),
+    transform var(--transition-fast),
+    text-shadow var(--transition-fast);
+}
+
+.navbar-left a:hover {
+  color: var(--color-accent);
+  transform: translateY(-1px);
+  text-shadow: 0 0 10px rgba(var(--color-accent-rgb), 0.6);
+}
+
+.navbar-left a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 0.4rem;
+}
+
+/* Right nav */
+.navbar-right .theme-toggle {
+  margin-right: 1rem;
+}
+
+/* Nav button */
+.nav-button {
+  padding: 0.45rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-dark-soft);
+  background: transparent;
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.app-container.light .nav-button {
+  border-color: var(--color-border-light-soft);
+}
+
+.nav-button:hover {
+  background: #1f2937;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.55);
+}
+
+.app-container.light .nav-button:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-text-light);
+}
+
+.nav-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ===========================
+   Mobile Nav
+   =========================== */
+.hamburger {
+  display: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.hamburger:hover {
+  background: rgba(148, 163, 184, 0.18);
+  border-color: rgba(148, 163, 184, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.4);
+}
+
+.hamburger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+/* Show mobile layout */
+@media (max-width: 768px) {
+  .navbar-left a,
   .navbar-right .theme-toggle {
-    margin-right: 1rem;
+    display: none;
   }
-  
-  /* Nav button */
-  .nav-button {
-    padding: 0.45rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border-dark-soft);
-    background: transparent;
-    color: inherit;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition:
-      background-color var(--transition-fast),
-      color var(--transition-fast),
-      transform var(--transition-fast),
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-  }
-  
-  .app-container.light .nav-button {
-    border-color: var(--color-border-light-soft);
-  }
-  
-  .nav-button:hover {
-    background: #1f2937;
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.55);
-  }
-  
-  .app-container.light .nav-button:hover {
-    background: var(--color-accent-soft);
-    color: var(--color-text-light);
-  }
-  
-  .nav-button:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  
-  /* ===========================
-     Mobile Nav
-     =========================== */
+
   .hamburger {
-    display: none;
-    cursor: pointer;
-    border-radius: 0.5rem;
-    padding: 0.35rem 0.6rem;
-    border: 1px solid transparent;
-    transition:
-      background-color var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast),
-      box-shadow var(--transition-fast);
+    display: block;
   }
-  
-  .hamburger:hover {
-    background: rgba(148, 163, 184, 0.18);
-    border-color: rgba(148, 163, 184, 0.45);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.4);
-  }
-  
-  .hamburger:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-  
+
   .mobile-menu {
-    display: none;
-  }
-  
-  /* Show mobile layout */
-  @media (max-width: 768px) {
-    .navbar-left a,
-    .navbar-right .theme-toggle {
-      display: none;
-    }
-  
-    .hamburger {
-      display: block;
-    }
-  
-    .mobile-menu {
-      display: flex;
-      flex-direction: column;
-      background: var(--color-surface-dark);
-      padding: 0.9rem 1.25rem;
-      border-top: 1px solid var(--color-border-dark);
-      box-shadow: var(--shadow-subtle);
-    }
-  
-    .app-container.light .mobile-menu {
-      background: #f8fafc;
-      border-top-color: var(--color-border-light);
-    }
-  
-    .mobile-menu a {
-      margin-bottom: 0.75rem;
-      text-decoration: none;
-      color: inherit;
-      font-size: 0.95rem;
-    }
-  
-    .mobile-menu a:last-child {
-      margin-bottom: 0;
-    }
-  }
-  
-  /* ===========================
-     Layout / Panels
-     =========================== */
-  .layout {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    padding: 0.75rem;
-    flex: 1;
-  }
-  
-  /* Single column on mobile */
-  @media (max-width: 768px) {
-    .layout {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  /* Panel base */
-  .panel {
     display: flex;
     flex-direction: column;
     background: var(--color-surface-dark);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border-dark);
-    overflow: hidden;
-    box-shadow: var(--shadow-soft);
-    transition:
-      transform var(--transition-med),
-      box-shadow var(--transition-med),
-      background-color var(--transition-med),
-      border-color var(--transition-med);
-  }
-  
-  .panel:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.45);
-  }
-  
-  .app-container.light .panel {
-    background: var(--color-surface-light);
-    border-color: var(--color-border-light);
-  }
-  
-  /* Panel header */
-  .panel-header {
-    padding: 0.6rem 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--color-border-dark);
-  }
-  
-  .app-container.light .panel-header {
-    border-bottom-color: var(--color-border-light);
-  }
-  
-  .panel-header h2 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    opacity: 0.9;
-  }
-  
-  /* Panel actions */
-  .panel-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  
-  .panel-actions button,
-  .panel-actions .file-input-label {
-    padding: 0.3rem 0.7rem;
-    font-size: 0.8rem;
-  }
-  
-  /* ===========================
-     Floating Controls
-     =========================== */
-  .controls {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.45rem 0.7rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--color-border-dark);
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
+    padding: 0.9rem 1.25rem;
+    border-top: 1px solid var(--color-border-dark);
     box-shadow: var(--shadow-subtle);
-    z-index: 30;
   }
-  
-  .app-container.light .controls {
-    background: rgba(241, 245, 249, 0.9);
-    border-color: var(--color-border-light);
+
+  .app-container.light .mobile-menu {
+    background: #f8fafc;
+    border-top-color: var(--color-border-light);
   }
-  
-  /* Raise controls slightly on small screens */
-  @media (max-width: 768px) {
-    .controls {
-      bottom: 1rem;
-    }
+
+  .mobile-menu a {
+    margin-bottom: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.95rem;
   }
-  
-  /* ===========================
-     Buttons & File Input Label
-     =========================== */
-  button,
-  .file-input-label {
-    border-radius: var(--radius-pill);
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--color-border-dark-soft);
-    background: #111827;
-    color: var(--color-text-dark);
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    transition:
-      background-color var(--transition-fast),
-      color var(--transition-fast),
-      transform var(--transition-fast),
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
+
+  .mobile-menu a:last-child {
+    margin-bottom: 0;
   }
-  
-  .app-container.light button,
-  .app-container.light .file-input-label {
-    background: #e2e8f0;
-    color: var(--color-text-light);
-    border-color: var(--color-border-light-soft);
+}
+
+/* ===========================
+   Layout / Panels
+   =========================== */
+.layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0.75rem;
+  flex: 1;
+}
+
+/* Single column on mobile */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
   }
-  
-  button:hover,
-  .file-input-label:hover {
-    background: #1f2937;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+}
+
+/* Panel base */
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-dark);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-dark);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--transition-med),
+    box-shadow var(--transition-med),
+    background-color var(--transition-med),
+    border-color var(--transition-med);
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.45);
+}
+
+.app-container.light .panel {
+  background: var(--color-surface-light);
+  border-color: var(--color-border-light);
+}
+
+/* Panel header */
+.panel-header {
+  padding: 0.6rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.app-container.light .panel-header {
+  border-bottom-color: var(--color-border-light);
+}
+
+/* Panel title & meta (new) */
+.panel-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.panel-header h2 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.panel-meta {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Panel actions */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.panel-actions button,
+.panel-actions .file-input-label {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* ===========================
+   Floating Controls
+   =========================== */
+.controls {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.45rem 0.7rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-dark);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-subtle);
+  z-index: 30;
+}
+
+.app-container.light .controls {
+  background: rgba(241, 245, 249, 0.9);
+  border-color: var(--color-border-light);
+}
+
+/* Raise controls slightly on small screens */
+@media (max-width: 768px) {
+  .controls {
+    bottom: 1rem;
+    flex-wrap: wrap;
   }
-  
-  .app-container.light button:hover,
-  .app-container.light .file-input-label:hover {
-    background: #cbd5e1;
-  }
-  
-  button:active,
-  .file-input-label:active {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-  
-  button:focus-visible,
-  .file-input-label:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  
-  /* Hide native file input */
-  input[type="file"] {
-    display: none;
-  }
-  
-  /* ===========================
-     Status Bar
-     =========================== */
-  #status-bar {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted-dark);
-    text-align: center;
-    min-height: 2.5rem;
-  }
-  
-  .app-container.light #status-bar {
-    color: var(--color-text-muted-light);
-  }
-  
-  /* ===========================
-     Utility Classes
-     =========================== */
-  .hidden {
-    display: none !important;
-  }
-  
-  /* Auto-convert highlight button */
-  .auto-convert {
-    background-color: var(--color-success) !important;
-    border: 1px solid #16a34a !important;
-    color: #dcfce7 !important;
-  }
-  
-  .auto-convert:hover {
-    background: #15803d !important;
-  }
-  
+}
+
+/* ===========================
+   Buttons & File Input Label
+   =========================== */
+button,
+.file-input-label {
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-border-dark-soft);
+  background: #111827;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.app-container.light button,
+.app-container.light .file-input-label {
+  background: #e2e8f0;
+  color: var(--color-text-light);
+  border-color: var(--color-border-light-soft);
+}
+
+button:hover,
+.file-input-label:hover {
+  background: #1f2937;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+}
+
+.app-container.light button:hover,
+.app-container.light .file-input-label:hover {
+  background: #cbd5e1;
+}
+
+button:active,
+.file-input-label:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+button:focus-visible,
+.file-input-label:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Hide native file input */
+input[type="file"] {
+  display: none;
+}
+
+/* ===========================
+   Status Bar
+   =========================== */
+#status-bar {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted-dark);
+  text-align: center;
+  min-height: 2.5rem;
+}
+
+.app-container.light #status-bar {
+  color: var(--color-text-muted-light);
+}
+
+/* ===========================
+   Utility Classes
+   =========================== */
+.hidden {
+  display: none !important;
+}
+
+/* ===========================
+   Auto-convert controls (new)
+   =========================== */
+.auto-convert-button {
+  background-color: var(--color-success) !important;
+  border: 1px solid #16a34a !important;
+  color: #dcfce7 !important;
+}
+
+.auto-convert-button:hover {
+  background: #15803d !important;
+}
+
+/* Auto-on-typing toggle */
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-dark-soft);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.app-container.light .toggle-label {
+  background: #e5e7eb;
+  border-color: var(--color-border-light-soft);
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 0.9rem;
+  height: 0.9rem;
+  accent-color: var(--color-accent);
+}
