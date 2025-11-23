@@ -37,12 +37,10 @@ const SAMPLE_JSON = `{
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [themePreset, setThemePreset] = useState<string>('');
 
   useEffect(() => {
-    const cls = [theme, themePreset].filter(Boolean).join(' ');
-    document.body.className = cls;
-  }, [theme, themePreset]);
+    document.body.className = theme;
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
@@ -57,24 +55,23 @@ const App: React.FC = () => {
   return (
     <BrowserRouter basename={basename}>
       <div className={`app-container ${theme}`}>
-        <Navbar toggleTheme={toggleTheme} theme={theme} themePreset={themePreset} setThemePreset={setThemePreset} />
+        <Navbar toggleTheme={toggleTheme} theme={theme} />
         <Routes>
           {/* Landing is the default home page; studio is explicit */}
           <Route path="/" element={<LandingPage theme={theme} />} />
-          <Route path="/studio" element={<Studio theme={theme} themePreset={themePreset} />} />
+          <Route path="/studio" element={<Studio theme={theme} />} />
           <Route path="/about" element={<AboutPage />} />
           {/* Unknown paths -> landing */}
           <Route path="*" element={<LandingPage theme={theme} />} />
         </Routes>
+        {/* Re-added footer with links (desktop). Hidden on small screens via CSS. */}
         <footer className="app-footer">
           <div className="footer-inner">
             <div className="footer-left">© 2025 TOON/JSON Converter</div>
             <div className="footer-right">
-              <Link to="/about">About</Link>
+              <a className="footer-link" href="/assist/manifest.json" target="_blank" rel="noreferrer">Manifest</a>
               <span className="sep">·</span>
-              <a href="https://github.com/DhruvilThummar/Script-Converter-Studio" target="_blank" rel="noreferrer">GitHub</a>
-              <span className="sep">·</span>
-              <a href="/assist/manifest.json" target="_blank" rel="noreferrer">Manifest</a>
+              <a className="footer-link" href="https://github.com/DhruvilThummar/Script-Converter-Studio" target="_blank" rel="noreferrer">GitHub</a>
             </div>
           </div>
         </footer>
@@ -86,16 +83,10 @@ const App: React.FC = () => {
 const Navbar: React.FC<{
   toggleTheme: () => void;
   theme: string;
-  themePreset: string;
-  setThemePreset: (v: string) => void;
 }> = ({
   toggleTheme,
   theme,
-  themePreset,
-  setThemePreset,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -120,37 +111,7 @@ const Navbar: React.FC<{
           <span className="tt-text">{theme === 'dark' ? 'Dark' : 'Light'}</span>
           <span className="tt-switch" aria-hidden="true" />
         </button>
-        <select
-          className="theme-presets"
-          value={themePreset}
-          onChange={e => setThemePreset(e.target.value)}
-          aria-label="Theme presets"
-        >
-          <option value="">Presets</option>
-          <option value="soft">Soft</option>
-          <option value="dusk">Dusk</option>
-          <option value="high-contrast">High Contrast</option>
-        </select>
-        <button
-          className="hamburger"
-          onClick={() => setIsMenuOpen(open => !open)}
-        >
-          &#9776;
-        </button>
       </div>
-      {isMenuOpen && (
-        <div className="mobile-menu">
-          <Link to="/" onClick={() => setIsMenuOpen(false)}>
-            Home
-          </Link>
-          <Link to="/studio" onClick={() => setIsMenuOpen(false)}>
-            Studio
-          </Link>
-          <Link to="/about" onClick={() => setIsMenuOpen(false)}>
-            About
-          </Link>
-        </div>
-      )}
     </nav>
   );
 };
@@ -175,7 +136,18 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
   );
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeEditor, setActiveEditor] = useState<'json' | 'toon'>('json');
-  const [autoConvert, setAutoConvert] = useState(true);
+  const [autoConvert, setAutoConvert] = useState<boolean>(() => {
+    try {
+      const v = localStorage.getItem('autoConvert');
+      return v === null ? true : JSON.parse(v);
+    } catch (e) {
+      return true;
+    }
+  });
+  const [isConverting, setIsConverting] = useState(false);
+  const debounceRef = useRef<number | null>(null);
+  const lastConvertedJsonRef = useRef<string>('');
+  const lastConvertedToonRef = useRef<string>('');
 
   // Find/Replace + caret tracking
   const [findOpen, setFindOpen] = useState(false);
@@ -457,29 +429,62 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
   useEffect(() => {
     if (!autoConvert) return;
 
-    if (activeEditor === 'json') {
-      if (!jsonInput.trim()) return;
-      const t = setTimeout(() => {
-        handleJsonToToon();
-      }, 400);
-      return () => clearTimeout(t);
+    const shouldRun = () => {
+      if (activeEditor === 'json') return !!jsonInput.trim() && jsonInput !== lastConvertedJsonRef.current;
+      return !!toonInput.trim() && toonInput !== lastConvertedToonRef.current;
+    };
+
+    if (!shouldRun()) return;
+
+    // debounce
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+      debounceRef.current = null;
     }
 
-    if (activeEditor === 'toon') {
-      if (!toonInput.trim()) return;
-      const t = setTimeout(() => {
-        handleToonToJson();
-      }, 400);
-      return () => clearTimeout(t);
-    }
-  }, [
-    autoConvert,
-    activeEditor,
-    jsonInput,
-    toonInput,
-    handleJsonToToon,
-    handleToonToJson,
-  ]);
+    setStatus('⏳ Auto waiting...');
+    debounceRef.current = window.setTimeout(async () => {
+      setIsConverting(true);
+      try {
+        if (activeEditor === 'json') {
+          // validate JSON first to avoid repeated failing conversions
+          const parsed = JSON.parse(jsonInput);
+          const toon = jsonToToon(parsed);
+          setToonInput(toon);
+          lastConvertedJsonRef.current = jsonInput;
+          setStatus('✅ Auto converted JSON ➝ TOON');
+        } else {
+          const lines = toonInput.replace(/\r\n/g, '\n').split('\n');
+          const value = parseToon(lines);
+          setJsonInput(JSON.stringify(value, null, 2));
+          lastConvertedToonRef.current = toonInput;
+          setStatus('✅ Auto converted TOON ➝ JSON');
+        }
+      } catch (err: any) {
+        setStatus(`❌ Auto convert error: ${err?.message ?? String(err)}`);
+      } finally {
+        setIsConverting(false);
+        if (debounceRef.current) {
+          window.clearTimeout(debounceRef.current);
+          debounceRef.current = null;
+        }
+      }
+    }, 350);
+
+    return () => {
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+    };
+  }, [autoConvert, activeEditor, jsonInput, toonInput]);
+
+  // persist autoConvert preference
+  useEffect(() => {
+    try {
+      localStorage.setItem('autoConvert', JSON.stringify(autoConvert));
+    } catch (e) {}
+  }, [autoConvert]);
 
   const handleSwap = useCallback(() => {
     const tempJson = jsonInput;
@@ -616,57 +621,7 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
       )}
 
       {/* Mobile persistent footer actions: visible and prominent on phones */}
-      {isMobile && (
-        <>
-          <button
-            className="assistant-launcher"
-            aria-label="Open assistant menu"
-            onClick={() => setMobileControlsOpen(s => !s)}
-          >
-            ☰
-          </button>
-
-          {mobileControlsOpen && (
-            <div className="assistant-backdrop" onClick={() => setMobileControlsOpen(false)} />
-          )}
-
-          {mobileControlsOpen && (
-            <div className="assistant-popup" role="dialog" aria-modal="true">
-              <div className="assistant-grid">
-                <button className="assistant-btn" onClick={() => { handleJsonToToon(); setMobileControlsOpen(false); }}>
-                  <div className="icon">⇄</div>
-                  <div className="label">JSON ➝ TOON</div>
-                </button>
-
-                <button className="assistant-btn" onClick={() => { handleAutoConvertOnce(); setMobileControlsOpen(false); }}>
-                  <div className="icon">⚡</div>
-                  <div className="label">Auto (once)</div>
-                </button>
-
-                <button className="assistant-btn" onClick={() => { handleSwap(); setMobileControlsOpen(false); }}>
-                  <div className="icon">🔁</div>
-                  <div className="label">Swap</div>
-                </button>
-
-                <button className="assistant-btn" onClick={() => { handleToonToJson(); setMobileControlsOpen(false); }}>
-                  <div className="icon">⇄</div>
-                  <div className="label">TOON ➝ JSON</div>
-                </button>
-
-                <label className="assistant-btn assistant-toggle" onClick={(e) => e.stopPropagation()}>
-                  <input type="checkbox" checked={autoConvert} onChange={e => setAutoConvert(e.target.checked)} />
-                  <div className="label">Auto on typing</div>
-                </label>
-
-                <button className="assistant-btn" onClick={() => { setShowResetConfirm(true); setMobileControlsOpen(false); }}>
-                  <div className="icon">🧹</div>
-                  <div className="label">Reset</div>
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      {/* Assistant popup removed per user request; mobile controls still available via the condensed controls button */}
       {/* JSON Panel */}
       <section
         className="panel"
@@ -946,9 +901,10 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
           <input
             type="checkbox"
             checked={autoConvert}
-            onChange={e => setAutoConvert(e.target.checked)}
+            onChange={e => { setAutoConvert(e.target.checked); setStatus(`Auto ${e.target.checked ? 'on' : 'off'}`); }}
           />
           <span>Auto on typing</span>
+          {isConverting && <span className="toggle-spinner" aria-hidden="true" />}
         </label>
 
         <button type="button" onClick={() => setShowResetConfirm(true)}>
@@ -1003,9 +959,10 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
               <input
                 type="checkbox"
                 checked={autoConvert}
-                onChange={e => setAutoConvert(e.target.checked)}
+                onChange={e => { setAutoConvert(e.target.checked); setStatus(`Auto ${e.target.checked ? 'on' : 'off'}`); }}
               />
               <span>Auto</span>
+              {isConverting && <span className="toggle-spinner" aria-hidden="true" />}
             </label>
             <button
               type="button"
@@ -1027,12 +984,29 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
       {/* Mobile footer actions: keep primary buttons visible on phones */}
       {isMobile && (
         <div className="mobile-footer-actions" role="navigation" aria-label="Mobile actions">
-          <button className="mfa-btn" onClick={() => handleJsonToToon()} aria-label="JSON to TOON">JSON ➝ TOON</button>
-          <button className="mfa-btn" onClick={() => { handleAutoConvertOnce(); }} aria-label="Auto once">⚡</button>
-          <button className="mfa-btn" onClick={() => handleSwap()} aria-label="Swap">🔁</button>
-          <button className="mfa-btn" onClick={() => handleToonToJson()} aria-label="TOON to JSON">TOON ➝ JSON</button>
+          <button className="mfa-btn" onClick={() => handleJsonToToon()} aria-label="JSON to TOON">
+            <span className="icon">⇄</span>
+            <span className="label">JSON</span>
+          </button>
+
+          <button className="mfa-btn" onClick={() => { handleAutoConvertOnce(); }} aria-label="Auto once">
+            <span className="icon">⚡</span>
+            <span className="label">Auto</span>
+          </button>
+
+          <button className="mfa-btn" onClick={() => handleSwap()} aria-label="Swap">
+            <span className="icon">🔁</span>
+            <span className="label">Swap</span>
+          </button>
+
+          <button className="mfa-btn" onClick={() => handleToonToJson()} aria-label="TOON to JSON">
+            <span className="icon">⇄</span>
+            <span className="label">TOON</span>
+          </button>
+
           <button className="mfa-btn mfa-toggle" onClick={() => setAutoConvert(v => !v)} aria-pressed={autoConvert} aria-label="Toggle auto">
-            {autoConvert ? 'Auto On' : 'Auto Off'}
+            <span className="icon">⚙️</span>
+            <span className="label">{autoConvert ? 'On' : 'Off'}</span>
           </button>
         </div>
       )}

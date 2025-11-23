@@ -57,10 +57,11 @@
   
   .about-container {
     position: relative;
-    width: 100%;
+    width: 95%;
     max-width: 980px;
     margin: 2.5rem auto;
     padding: 2.5rem 2.1rem 2.3rem;
+    box-sizing: border-box;
   
     background: var(--secondary-bg-color-soft);
     border-radius: 20px;
@@ -161,14 +162,14 @@
      =========================== */
   .about-container > img:first-of-type {
     display: block;
-    width: 100%;
+    width: 80%;
     border-radius: 14px;
     margin-bottom: 1.6rem;
   }
   
   .about-container > img:last-of-type {
     display: block;
-    width: 100%;
+    width: 80%;
     border-radius: 14px;
     margin-top: 1.6rem;
   }
@@ -179,6 +180,9 @@
   
   .about-section {
     margin-bottom: 2rem;
+    /* prevent wide content from escaping on small screens */
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   
   .about-section:last-of-type {
@@ -227,6 +231,8 @@
   .about-section li {
     font-size: 0.97rem;
     line-height: 1.7;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   
   /* Lists */
@@ -270,6 +276,9 @@
     overflow: hidden;
     border: 1px solid rgba(148, 163, 184, 0.5);
     backdrop-filter: blur(6px);
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
   }
   
   .about-section th,
@@ -278,6 +287,8 @@
     font-size: 0.95rem;
     text-align: left;
     border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   
   .about-section th {
@@ -321,5 +332,13 @@
     .about-section table {
       font-size: 0.9rem;
     }
+    
+    /* slightly reduce heading and body sizes on very small phones */
+    .about-section h2 { font-size: 1.1rem; }
+    .about-section p, .about-section li { font-size: 0.92rem; }
   }
+
+/* Ensure images and badges never overflow their container */
+.about-container img { max-width: 100%; height: auto; display: block; }
+.about-section p img { max-width: 100%; height: auto; }
   
