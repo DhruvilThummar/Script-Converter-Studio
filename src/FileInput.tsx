@@ -1,27 +1,34 @@
 import React from 'react';
 
 interface FileInputProps {
-  onFileContent: (content: string) => void;
+  onFileContent: (content: string, filename?: string) => void;
   label: string;
+  accept?: string;
+  className?: string;
 }
 
-const FileInput: React.FC<FileInputProps> = ({ onFileContent, label }) => {
+const FileInput: React.FC<FileInputProps> = ({
+  onFileContent,
+  label,
+  accept = '.json,.toon,.txt',
+  className = 'file-input-label',
+}) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        onFileContent(content);
+        onFileContent(content, file.name);
       };
       reader.readAsText(file);
     }
   };
 
   return (
-    <label>
+    <label className={className}>
       {label}
-      <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+      <input type="file" accept={accept} onChange={handleFileChange} />
     </label>
   );
 };

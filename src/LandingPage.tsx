@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
+import './index.css';
 
 interface LandingPageProps {
   theme: 'dark' | 'light';
@@ -17,25 +18,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ theme }) => {
           </div>
 
           <h1>
-            Convert <span>TOON</span> & <span>JSON</span>  
+            Convert <span>TOON</span> & <span>JSON</span>
             <br />
-            with confidence.
+            — fast, reliable, in your browser.
           </h1>
 
           <p className="hero-subtitle">
-            A fast, open-source playground for switching between TOON and JSON.
-            Live conversion, error feedback, file upload/download, and theme
-            support — in one minimal studio.
+            A lightweight editor to edit, validate, and convert between TOON
+            and JSON. No uploads — everything runs locally in your browser.
           </p>
 
-          <div className="hero-buttons">
+          <div className="hero-cta">
             <Link to="/studio" className="btn btn-primary">
-              Start Converting
+              Open Studio
             </Link>
             <Link to="/about" className="btn btn-ghost">
               Learn More
             </Link>
+            <a href="#features" className="btn btn-ghost" aria-label="See features">
+              Features
+            </a>
           </div>
+
+          
 
           <div className="hero-meta">
             <div className="pill">
@@ -89,7 +94,7 @@ actors:
         </div>
       </section>
 
-      <section className="feature-grid">
+      <section id="features" className="feature-grid">
         <article className="feature-card">
           <h3>Live Conversion</h3>
           <p>

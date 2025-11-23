@@ -115,24 +115,25 @@
      =========================== */
   
   .light .about-container {
-    background: transparent;
-    border-color: rgba(148, 163, 184, 0.45);
-    box-shadow:
-      0 18px 46px rgba(15, 23, 42, 0.18),
-      0 0 0 1px rgba(148, 163, 184, 0.4);
-    filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.45));
+    /* Align with landing panel light look */
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border-color: rgba(148, 163, 184, 0.28);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+    filter: none;
   }
   
   .light .about-container::before {
-    opacity: 0.75;
-    filter: blur(20px);
+    /* much reduced glow to match landing's subtle look */
+    opacity: 0.12;
+    filter: blur(10px);
   }
   
   .light .about-container::after {
+    /* soft inner highlight */
     background:
-      radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.95), transparent 55%),
-      radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.22), transparent 60%);
-    opacity: 0.75;
+      radial-gradient(circle at 0% 0%, rgba(255,255,255,0.95), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(59,130,246,0.04), transparent 60%);
+    opacity: 0.5;
   }
   
   .light .about-container,
@@ -144,6 +145,15 @@
   .light .about-container th,
   .light .about-container td {
     color: #020617;
+  }
+
+  /* Make table header and even rows consistent with landing light tables */
+  .light .about-section th {
+    background: rgba(241, 245, 249, 0.96);
+    color: #020617;
+  }
+  .light .about-section tr:nth-child(even) td {
+    background: rgba(226, 232, 240, 0.75);
   }
   
   /* ===========================
