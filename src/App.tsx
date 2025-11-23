@@ -37,10 +37,12 @@ const SAMPLE_JSON = `{
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [themePreset, setThemePreset] = useState<string>('');
 
   useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
+    const cls = [theme, themePreset].filter(Boolean).join(' ');
+    document.body.className = cls;
+  }, [theme, themePreset]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
@@ -55,11 +57,11 @@ const App: React.FC = () => {
   return (
     <BrowserRouter basename={basename}>
       <div className={`app-container ${theme}`}>
-        <Navbar toggleTheme={toggleTheme} theme={theme} />
+        <Navbar toggleTheme={toggleTheme} theme={theme} themePreset={themePreset} setThemePreset={setThemePreset} />
         <Routes>
           {/* Landing is the default home page; studio is explicit */}
           <Route path="/" element={<LandingPage theme={theme} />} />
-          <Route path="/studio" element={<Studio theme={theme} />} />
+          <Route path="/studio" element={<Studio theme={theme} themePreset={themePreset} />} />
           <Route path="/about" element={<AboutPage />} />
           {/* Unknown paths -> landing */}
           <Route path="*" element={<LandingPage theme={theme} />} />
@@ -81,9 +83,16 @@ const App: React.FC = () => {
   );
 };
 
-const Navbar: React.FC<{ toggleTheme: () => void; theme: string }> = ({
+const Navbar: React.FC<{
+  toggleTheme: () => void;
+  theme: string;
+  themePreset: string;
+  setThemePreset: (v: string) => void;
+}> = ({
   toggleTheme,
   theme,
+  themePreset,
+  setThemePreset,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -111,6 +120,17 @@ const Navbar: React.FC<{ toggleTheme: () => void; theme: string }> = ({
           <span className="tt-text">{theme === 'dark' ? 'Dark' : 'Light'}</span>
           <span className="tt-switch" aria-hidden="true" />
         </button>
+        <select
+          className="theme-presets"
+          value={themePreset}
+          onChange={e => setThemePreset(e.target.value)}
+          aria-label="Theme presets"
+        >
+          <option value="">Presets</option>
+          <option value="soft">Soft</option>
+          <option value="dusk">Dusk</option>
+          <option value="high-contrast">High Contrast</option>
+        </select>
         <button
           className="hamburger"
           onClick={() => setIsMenuOpen(open => !open)}
@@ -140,7 +160,7 @@ interface EditorStats {
   chars: number;
 }
 
-const Studio: React.FC<{ theme: string }> = ({ theme }) => {
+const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, themePreset = '' }) => {
   const [mobileControlsOpen, setMobileControlsOpen] = useState(false);
   const [jsonInput, setJsonInput] = useState(
     localStorage.getItem('jsonInput') || ''
@@ -157,6 +177,14 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
   const [activeEditor, setActiveEditor] = useState<'json' | 'toon'>('json');
   const [autoConvert, setAutoConvert] = useState(true);
 
+  // Find/Replace + caret tracking
+  const [findOpen, setFindOpen] = useState(false);
+  const [findText, setFindText] = useState('');
+  const [replaceText, setReplaceText] = useState('');
+  const matchesRef = useRef<any[]>([]);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+  const [caretPos, setCaretPos] = useState({ line: 1, column: 1 });
+
   const [jsonStats, setJsonStats] = useState<EditorStats>({
     lines: 0,
     chars: 0,
@@ -165,9 +193,14 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
     lines: 0,
     chars: 0,
   });
+  const [showMoreJson, setShowMoreJson] = useState(false);
+  const [showMoreToon, setShowMoreToon] = useState(false);
 
   const jsonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const toonEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  // Helper: monaco theme mapping influenced by themePreset
+  const monacoTheme = themePreset === 'high-contrast' ? 'hc-black' : theme === 'dark' ? 'vs-dark' : 'light';
 
   // Focus the active editor when studio mounts or when active editor changes
   useEffect(() => {
@@ -189,8 +222,79 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Find/replace helpers (simple, works on the active editor)
+  const computeMatches = (editorInst: any, search: string) => {
+    if (!editorInst || !search) {
+      matchesRef.current = [];
+      setCurrentMatchIndex(0);
+      return;
+    }
+    const model = editorInst.getModel();
+    if (!model) return;
+    const ms = model.findMatches(search, false, false, true, null, true) || [];
+    matchesRef.current = ms;
+    setCurrentMatchIndex(0);
+    if (ms.length) {
+      const r = ms[0].range;
+      try {
+        editorInst.setSelection(r);
+        editorInst.revealRangeInCenter(r);
+      } catch (e) {}
+    }
+  };
+
+  const findNext = (editorInst: any) => {
+    const ms = matchesRef.current || [];
+    if (!ms.length || !editorInst) return;
+    const next = (currentMatchIndex + 1) % ms.length;
+    setCurrentMatchIndex(next);
+    const r = ms[next].range;
+    try {
+      editorInst.setSelection(r);
+      editorInst.revealRangeInCenter(r);
+    } catch (e) {}
+  };
+
+  const replaceOne = (editorInst: any) => {
+    const ms = matchesRef.current || [];
+    if (!ms.length || !editorInst) return;
+    const idx = currentMatchIndex;
+    const r = ms[idx].range;
+    try {
+      editorInst.executeEdits('find-replace', [{ range: r, text: replaceText }]);
+    } catch (e) {}
+    // recompute
+    computeMatches(editorInst, findText);
+  };
+
+  const replaceAll = (editorInst: any) => {
+    const ms = matchesRef.current || [];
+    if (!ms.length || !editorInst) return;
+    // apply edits from bottom to top to preserve ranges
+    for (let i = ms.length - 1; i >= 0; i--) {
+      const r = ms[i].range;
+      try {
+        editorInst.executeEdits('find-replace', [{ range: r, text: replaceText }]);
+      } catch (e) {}
+    }
+    computeMatches(editorInst, findText);
+  };
+
+  // Recompute matches whenever search text or active editor changes
+  useEffect(() => {
+    const inst = activeEditor === 'json' ? jsonEditorRef.current : toonEditorRef.current;
+    if (!findText) {
+      matchesRef.current = [];
+      setCurrentMatchIndex(0);
+      return;
+    }
+    computeMatches(inst, findText);
+  }, [findText, activeEditor]);
+
   // Resizer handlers for draggable divider
   const isDraggingRef = useRef(false);
+  const isTouchDraggingRef = useRef(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
@@ -201,18 +305,38 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
       const ratio = Math.max(20, Math.min(80, (x / rect.width) * 100));
       setLeftRatio(ratio);
     };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isTouchDraggingRef.current) return;
+      const touch = e.touches[0];
+      const container = document.querySelector('.layout') as HTMLElement | null;
+      if (!container || !touch) return;
+      const rect = container.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const ratio = Math.max(20, Math.min(80, (x / rect.width) * 100));
+      setLeftRatio(ratio);
+      e.preventDefault();
+    };
     const onUp = () => {
       isDraggingRef.current = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };
+    const onTouchEnd = () => {
+      isTouchDraggingRef.current = false;
+      document.body.style.touchAction = '';
+    };
     window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('mouseup', onUp);
+    window.addEventListener('touchend', onTouchEnd);
     return () => {
       window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('touchmove', onTouchMove as any);
       window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
+
 
   // Persist
   useEffect(() => {
@@ -251,35 +375,58 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
 
   // When a file is uploaded, decide whether it's JSON or TOON by filename
   const handleUploadForJson = (content: string, filename?: string) => {
-    setJsonInput(content);
     setActiveEditor('json');
-    setStatus(`Loaded ${filename ?? 'file'} into JSON editor`);
-    // auto-convert if file is .toon
-    if (filename && filename.toLowerCase().endsWith('.toon')) {
-      // if uploaded a .toon into json slot, try to parse it
-      try {
-        const lines = content.replace(/\r\n/g, '\n').split('\n');
-        const value = parseToon(lines);
-        setJsonInput(JSON.stringify(value, null, 2));
-        setStatus(`Converted uploaded .toon to JSON`);
-      } catch (err: any) {
-        setStatus(`Uploaded .toon parsed with errors: ${err.message}`);
-      }
+    // Smart detection: prefer JSON.parse, fallback to TOON parser
+    try {
+      const maybeJson = JSON.parse(content);
+      setJsonInput(JSON.stringify(maybeJson, null, 2));
+      setStatus(`Loaded ${filename ?? 'file'} as JSON`);
+      return;
+    } catch (jsonErr) {
+      // not JSON — try TOON
+    }
+
+    try {
+      const lines = content.replace(/\r\n/g, '\n').split('\n');
+      const value = parseToon(lines);
+      setJsonInput(JSON.stringify(value, null, 2));
+      setStatus(`Loaded ${filename ?? 'file'} and converted TOON ➝ JSON`);
+      return;
+    } catch (toonErr: any) {
+      // fallback: store raw content but notify user
+      setJsonInput(content);
+      setStatus(`Loaded ${filename ?? 'file'}; not valid JSON or TOON (${toonErr?.message ?? 'parse error'})`);
     }
   };
 
   const handleUploadForToon = (content: string, filename?: string) => {
-    setToonInput(content);
     setActiveEditor('toon');
-    setStatus(`Loaded ${filename ?? 'file'} into TOON editor`);
-    if (filename && filename.toLowerCase().endsWith('.json')) {
+    // Smart detection: if content is valid JSON, convert to TOON. Otherwise assume TOON format.
+    try {
+      const parsed = JSON.parse(content);
       try {
-        const parsed = JSON.parse(content);
-        setToonInput(jsonToToon(parsed));
-        setStatus(`Converted uploaded JSON to TOON`);
-      } catch (err: any) {
-        setStatus(`Uploaded JSON parse error: ${err.message}`);
+        const toon = jsonToToon(parsed);
+        setToonInput(toon);
+        setStatus(`Loaded ${filename ?? 'file'} and converted JSON ➝ TOON`);
+        return;
+      } catch (convErr: any) {
+        setToonInput(content);
+        setStatus(`Loaded JSON but conversion to TOON failed: ${convErr?.message ?? String(convErr)}`);
+        return;
       }
+    } catch (jsonErr) {
+      // not JSON — assume TOON text
+    }
+
+    // plain TOON content: try to validate by parsing
+    try {
+      const lines = content.replace(/\r\n/g, '\n').split('\n');
+      parseToon(lines); // validation only
+      setToonInput(content);
+      setStatus(`Loaded ${filename ?? 'file'} as TOON`);
+    } catch (err: any) {
+      setToonInput(content);
+      setStatus(`Loaded ${filename ?? 'file'}; not valid JSON or TOON (${err?.message ?? 'parse error'})`);
     }
   };
 
@@ -334,12 +481,51 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
     handleToonToJson,
   ]);
 
-  const handleSwap = () => {
+  const handleSwap = useCallback(() => {
     const tempJson = jsonInput;
     setJsonInput(toonInput);
     setToonInput(tempJson);
     setStatus('🔁 Inputs swapped');
-  };
+  }, [jsonInput, toonInput]);
+
+  // Keyboard shortcuts: Cmd/Ctrl+Enter = convert, Cmd/Ctrl+K = swap, Cmd/Ctrl+U = toggle auto
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      try {
+        const mod = e.ctrlKey || e.metaKey;
+        if (!mod) return;
+        // Enter -> convert (use active editor)
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          try {
+            handleAutoConvertOnce();
+          } catch (err: any) {
+            setStatus(`Shortcut error: ${err?.message ?? String(err)}`);
+          }
+        }
+        // k -> swap
+        if (e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          try {
+            handleSwap();
+          } catch (err: any) {
+            setStatus(`Swap failed: ${err?.message ?? String(err)}`);
+          }
+        }
+        // u -> toggle autoConvert
+        if (e.key.toLowerCase() === 'u') {
+          e.preventDefault();
+          setAutoConvert(v => !v);
+          setStatus(prev => `${prev} • Auto ${(autoConvert ? 'off' : 'on')}`);
+        }
+      } catch (outerErr: any) {
+        // guard against unexpected errors in shortcut handler
+        setStatus(`Keyboard handler error: ${outerErr?.message ?? String(outerErr)}`);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [handleAutoConvertOnce, handleSwap, autoConvert]);
 
   const handleReset = () => {
     setJsonInput('');
@@ -431,32 +617,55 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
 
       {/* Mobile persistent footer actions: visible and prominent on phones */}
       {isMobile && (
-        <div className="mobile-footer-actions" role="navigation" aria-label="Studio actions">
-          <button className="mfa-btn" onClick={handleJsonToToon}>
-            JSON ➝ TOON
+        <>
+          <button
+            className="assistant-launcher"
+            aria-label="Open assistant menu"
+            onClick={() => setMobileControlsOpen(s => !s)}
+          >
+            ☰
           </button>
 
-          <button className="mfa-btn" onClick={handleAutoConvertOnce}>
-            Auto (once)
-          </button>
+          {mobileControlsOpen && (
+            <div className="assistant-backdrop" onClick={() => setMobileControlsOpen(false)} />
+          )}
 
-          <button className="mfa-btn" onClick={handleSwap}>
-            Swap
-          </button>
+          {mobileControlsOpen && (
+            <div className="assistant-popup" role="dialog" aria-modal="true">
+              <div className="assistant-grid">
+                <button className="assistant-btn" onClick={() => { handleJsonToToon(); setMobileControlsOpen(false); }}>
+                  <div className="icon">⇄</div>
+                  <div className="label">JSON ➝ TOON</div>
+                </button>
 
-          <button className="mfa-btn" onClick={handleToonToJson}>
-            TOON ➝ JSON
-          </button>
+                <button className="assistant-btn" onClick={() => { handleAutoConvertOnce(); setMobileControlsOpen(false); }}>
+                  <div className="icon">⚡</div>
+                  <div className="label">Auto (once)</div>
+                </button>
 
-          <label className="mfa-toggle">
-            <input type="checkbox" checked={autoConvert} onChange={e => setAutoConvert(e.target.checked)} />
-            <span>Auto on typing</span>
-          </label>
+                <button className="assistant-btn" onClick={() => { handleSwap(); setMobileControlsOpen(false); }}>
+                  <div className="icon">🔁</div>
+                  <div className="label">Swap</div>
+                </button>
 
-          <button className="mfa-btn" onClick={handleReset}>
-            Reset
-          </button>
-        </div>
+                <button className="assistant-btn" onClick={() => { handleToonToJson(); setMobileControlsOpen(false); }}>
+                  <div className="icon">⇄</div>
+                  <div className="label">TOON ➝ JSON</div>
+                </button>
+
+                <label className="assistant-btn assistant-toggle" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={autoConvert} onChange={e => setAutoConvert(e.target.checked)} />
+                  <div className="label">Auto on typing</div>
+                </label>
+
+                <button className="assistant-btn" onClick={() => { setShowResetConfirm(true); setMobileControlsOpen(false); }}>
+                  <div className="icon">🧹</div>
+                  <div className="label">Reset</div>
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
       {/* JSON Panel */}
       <section
@@ -474,12 +683,49 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
               )}
           </div>
           <div className="panel-actions">
-            <button type="button" onClick={loadSampleJson}>
-              Sample
-            </button>
-            <button type="button" onClick={prettyPrintJson}>
-              Pretty
-            </button>
+            <button type="button" onClick={() => { setFindOpen(f => !f); }} aria-pressed={findOpen}>Find</button>
+            {findOpen && activeEditor === 'toon' && (
+              <div className="find-panel">
+                <input
+                  aria-label="Find text"
+                  placeholder="Find"
+                  value={findText}
+                  onChange={e => setFindText(e.target.value)}
+                />
+                <input
+                  aria-label="Replace text"
+                  placeholder="Replace"
+                  value={replaceText}
+                  onChange={e => setReplaceText(e.target.value)}
+                />
+                <button onClick={() => computeMatches(toonEditorRef.current, findText)}>Find</button>
+                <button onClick={() => findNext(toonEditorRef.current)}>Next</button>
+                <button onClick={() => replaceOne(toonEditorRef.current)}>Replace</button>
+                <button onClick={() => replaceAll(toonEditorRef.current)}>Replace All</button>
+                <button onClick={() => setFindOpen(false)}>Close</button>
+              </div>
+            )}
+            {findOpen && activeEditor === 'json' && (
+              <div className="find-panel">
+                <input
+                  aria-label="Find text"
+                  placeholder="Find"
+                  value={findText}
+                  onChange={e => setFindText(e.target.value)}
+                />
+                <input
+                  aria-label="Replace text"
+                  placeholder="Replace"
+                  value={replaceText}
+                  onChange={e => setReplaceText(e.target.value)}
+                />
+                <button onClick={() => computeMatches(jsonEditorRef.current, findText)}>Find</button>
+                <button onClick={() => findNext(jsonEditorRef.current)}>Next</button>
+                <button onClick={() => replaceOne(jsonEditorRef.current)}>Replace</button>
+                <button onClick={() => replaceAll(jsonEditorRef.current)}>Replace All</button>
+                <button onClick={() => setFindOpen(false)}>Close</button>
+              </div>
+            )}
             <button type="button" onClick={() => setJsonInput('')}>
               Clear
             </button>
@@ -496,6 +742,21 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
               label="Download"
             />
             <FileInput onFileContent={handleUploadForJson} label="Upload" />
+            <div className="more-menu">
+              <button className="more-button" onClick={() => setShowMoreJson(s => !s)}>
+                More
+              </button>
+              {showMoreJson && (
+                <div className="more-dropdown">
+                  <button type="button" onClick={() => { loadSampleJson(); setShowMoreJson(false); }}>
+                    Sample
+                  </button>
+                  <button type="button" onClick={() => { prettyPrintJson(); setShowMoreJson(false); }}>
+                    Pretty
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div
@@ -512,16 +773,15 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             value={jsonInput}
             onMount={editorInstance => {
               jsonEditorRef.current = editorInstance;
-              editorInstance.onDidFocusEditorWidget(() =>
-                setActiveEditor('json')
-              );
+              editorInstance.onDidFocusEditorWidget(() => setActiveEditor('json'));
+              editorInstance.onDidChangeCursorPosition((e) => setCaretPos({ line: e.position.lineNumber, column: e.position.column }));
               // keep cursor visible and focus if active
               if (activeEditor === 'json') {
                 try { editorInstance.focus(); } catch (e) {}
               }
             }}
             onChange={value => setJsonInput(value || '')}
-            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            theme={monacoTheme}
             options={{
               minimap: { enabled: false },
               automaticLayout: true,
@@ -551,6 +811,27 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             document.body.style.userSelect = 'none';
             e.preventDefault();
           }}
+          onTouchStart={e => {
+            // enable touch dragging on the divider
+            isTouchDraggingRef.current = true;
+            document.body.style.touchAction = 'none';
+            e.preventDefault();
+          }}
+          onTouchMove={e => {
+            if (!isTouchDraggingRef.current) return;
+            const touch = e.touches[0];
+            const container = document.querySelector('.layout') as HTMLElement | null;
+            if (!container || !touch) return;
+            const rect = container.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const ratio = Math.max(20, Math.min(80, (x / rect.width) * 100));
+            setLeftRatio(ratio);
+            e.preventDefault();
+          }}
+          onTouchEnd={() => {
+            isTouchDraggingRef.current = false;
+            document.body.style.touchAction = '';
+          }}
         />
       )}
 
@@ -570,9 +851,7 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             )}
           </div>
           <div className="panel-actions">
-            <button type="button" onClick={trimToonLines}>
-              Tidy
-            </button>
+            <button type="button" onClick={() => { setFindOpen(f => !f); }} aria-pressed={findOpen}>Find</button>
             <button type="button" onClick={() => setToonInput('')}>
               Clear
             </button>
@@ -589,6 +868,18 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
               label="Download"
             />
             <FileInput onFileContent={handleUploadForToon} label="Upload" />
+            <div className="more-menu">
+              <button className="more-button" onClick={() => setShowMoreToon(s => !s)}>
+                More
+              </button>
+              {showMoreToon && (
+                <div className="more-dropdown">
+                  <button type="button" onClick={() => { trimToonLines(); setShowMoreToon(false); }}>
+                    Tidy
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div
@@ -605,15 +896,14 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             value={toonInput}
             onMount={editorInstance => {
               toonEditorRef.current = editorInstance;
-              editorInstance.onDidFocusEditorWidget(() =>
-                setActiveEditor('toon')
-              );
+              editorInstance.onDidFocusEditorWidget(() => setActiveEditor('toon'));
+              editorInstance.onDidChangeCursorPosition((e) => setCaretPos({ line: e.position.lineNumber, column: e.position.column }));
               if (activeEditor === 'toon') {
                 try { editorInstance.focus(); } catch (e) {}
               }
             }}
             onChange={value => setToonInput(value || '')}
-            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            theme={monacoTheme}
             options={{
               minimap: { enabled: false },
               automaticLayout: true,
@@ -661,7 +951,7 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
           <span>Auto on typing</span>
         </label>
 
-        <button type="button" onClick={handleReset}>
+        <button type="button" onClick={() => setShowResetConfirm(true)}>
           Reset
         </button>
       </div>
@@ -720,7 +1010,7 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
             <button
               type="button"
               onClick={() => {
-                handleReset();
+                setShowResetConfirm(true);
                 setMobileControlsOpen(false);
               }}
             >
@@ -731,6 +1021,22 @@ const Studio: React.FC<{ theme: string }> = ({ theme }) => {
       </div>
 
       <div id="status-bar">{status}</div>
+
+      <div className="status-caret">Ln {caretPos.line}:Col {caretPos.column}</div>
+
+      {/* Reset confirmation modal */}
+      {showResetConfirm && (
+        <div className="modal-backdrop" onClick={() => setShowResetConfirm(false)}>
+          <div className="modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+            <h3>Confirm reset</h3>
+            <p>Are you sure you want to clear both editors and local storage?</p>
+            <div className="modal-actions">
+              <button onClick={() => setShowResetConfirm(false)}>Cancel</button>
+              <button onClick={() => { handleReset(); setShowResetConfirm(false); }}>Yes, reset</button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
