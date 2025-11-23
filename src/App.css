@@ -888,6 +888,9 @@
   padding: 12px;
   box-shadow: 0 20px 60px rgba(2,6,23,0.35);
   animation: slideUp 260ms cubic-bezier(.2,.9,.28,1) both;
+  max-height: calc(66vh);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes slideUp {
@@ -912,12 +915,38 @@
   color: #fff;
   border: 1px solid rgba(255,255,255,0.06);
   font-size: 0.85rem;
+  min-height: 72px;
+  justify-content: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
 
 .assistant-btn .icon { font-size: 1.2rem; }
 .assistant-btn .label { font-size: 0.78rem; }
 
 .assistant-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 8px; background: linear-gradient(180deg,#fff,#f8fafc); color: #020617; }
+
+/* Make assistant launcher a little bouncier on show */
+.assistant-launcher { animation: popIn 320ms cubic-bezier(.2,.9,.28,1) both; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+
+/* Ensure popup and controls are above other overlays and safe on small screens */
+.assistant-popup { z-index: 1000; }
+.assistant-backdrop { z-index: 999; }
+.controls-mobile-menu { z-index: 1100; }
+
+/* Mobile footer actions improvements */
+.mobile-footer-actions {
+  touch-action: manipulation;
+  transition: transform 260ms cubic-bezier(.2,.9,.28,1), opacity 200ms ease;
+}
+.mobile-footer-actions .mfa-btn { padding: 0.7rem 0.9rem; min-width: 72px; font-weight: 600; }
+.mobile-footer-actions .mfa-btn .icon { margin-right: 6px; }
+.mobile-footer-actions .mfa-btn:focus { outline: 3px solid rgba(var(--color-accent-rgb),0.18); }
+
+/* Slight elevation when visible to show it's interactive */
+@media (max-width: 768px) {
+  .mobile-footer-actions { transform: translateY(0); opacity: 1; }
+}
 
 @media (prefers-color-scheme: dark) {
   .assistant-popup { background: linear-gradient(180deg, rgba(8,10,16,0.98), rgba(8,10,16,0.95)); }

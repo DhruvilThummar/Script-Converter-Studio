@@ -1024,6 +1024,19 @@ const Studio: React.FC<{ theme: string; themePreset?: string }> = ({ theme, them
 
       <div className="status-caret">Ln {caretPos.line}:Col {caretPos.column}</div>
 
+      {/* Mobile footer actions: keep primary buttons visible on phones */}
+      {isMobile && (
+        <div className="mobile-footer-actions" role="navigation" aria-label="Mobile actions">
+          <button className="mfa-btn" onClick={() => handleJsonToToon()} aria-label="JSON to TOON">JSON ➝ TOON</button>
+          <button className="mfa-btn" onClick={() => { handleAutoConvertOnce(); }} aria-label="Auto once">⚡</button>
+          <button className="mfa-btn" onClick={() => handleSwap()} aria-label="Swap">🔁</button>
+          <button className="mfa-btn" onClick={() => handleToonToJson()} aria-label="TOON to JSON">TOON ➝ JSON</button>
+          <button className="mfa-btn mfa-toggle" onClick={() => setAutoConvert(v => !v)} aria-pressed={autoConvert} aria-label="Toggle auto">
+            {autoConvert ? 'Auto On' : 'Auto Off'}
+          </button>
+        </div>
+      )}
+
       {/* Reset confirmation modal */}
       {showResetConfirm && (
         <div className="modal-backdrop" onClick={() => setShowResetConfirm(false)}>
